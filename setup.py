@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='relation_extraction_utils',
     version='',
-    packages=['count_trigger_paths'],
+    packages=['count_trigger_paths', 'prepare_for_trigger_identification'],
     url='https://github.com/comp-aspects-of-appl-linguistics/relation_extraction_utils',
     license='ASL 2.0',
     author='Or, Shachar, Jonathan',
