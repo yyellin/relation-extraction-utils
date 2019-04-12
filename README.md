@@ -19,4 +19,4 @@ pip install -U git+https://github.com/comp-aspects-of-appl-linguistics/relation_
 
 ## License
 
-relation-extraction-utils is released under the Apache License, Version 2.0.
+relation-extraction-utils is released under GPLv3.
