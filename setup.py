@@ -10,6 +10,6 @@ setup(
     author_email='',
     description='Various utilities for processing and analyzing relation extraction related data',
     install_requires=[
-        'pandas', 'networkx'
+        'stanfordnlp', 'nltk', 'pandas', 'networkx'
     ],
 )
