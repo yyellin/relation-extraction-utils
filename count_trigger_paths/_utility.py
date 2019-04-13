@@ -2,10 +2,35 @@ from collections import namedtuple
 
 import networkx
 
-Link = namedtuple('Link', 'word, word_index, governor, governor_index, dep_type')
+
+class Link(namedtuple('Link', 'word, word_index, governor, governor_index, dep_type')):
+    """
+    An object of type link is a tuple with all the dependency information related to a single
+    dependency:
+    the word and it's index; it's parent (governor) with the parent's index, as well as the
+    dependency type itself
+    """
+    pass
 
 
-def _get_links(unprocessed_links):
+def get_links(unprocessed_links):
+    """
+    'get_links' will take the stanfordnlp's representation of a dependency tree of a sentence
+    and return a list of 'Link' objects representing the same.
+    The advantage ot the Link based representation is that it's a named-tuple which is much less error
+    prone that a simple tuple where it's possible to get indexing very wrong.
+
+    Parameters
+    ----------
+    unprocessed_links :
+        stanfordnlp's representation of a dependency tree as a list of tuples
+
+    Returns
+    -------
+        the same dependency tree represented by a list of Link objects
+
+    """
+
     links = []
 
     for unprocessed_link in unprocessed_links:
@@ -20,7 +45,28 @@ def _get_links(unprocessed_links):
     return links
 
 
-def _get_head(links, nodes):
+def get_head(links, nodes):
+    """
+    'get_head' will receive a dependency tree represented as a list of Link objects as well as a
+    list of contiguous node indices and will return the head node among them (i.e. a node which all
+    others are decedents of)
+
+
+    Parameters
+    ----------
+    links
+        representation of dependency tree as list of Link objects
+        
+    nodes
+        list of contiguous node indices
+
+    Returns
+    -------
+    returns one of the node indices in 'nodes' which is an ancestor of all other.
+    Importantly, if no such node exists (i.e. there is no node in 'nodes' which is
+    ancestor to all others) the first node in 'nodes' will be returned
+
+    """
     graph = __get_networkx_digraph(links)
 
     for potential_head in nodes:
@@ -41,6 +87,9 @@ def _get_head(links, nodes):
 
 
 def __get_networkx_digraph(links):
+    """
+    internal method that converts a list of Link objects into an instance of 'networkx.DiGraph'
+    """
     edges = []
     for link in links:
         edges.append((link.governor_index, link.word_index))
