@@ -4,8 +4,7 @@ from enum import Enum
 
 import pandas
 
-from count_trigger_paths import _utility
-from count_trigger_paths._dep_graph import DepGraph
+from count_trigger_paths.__dep_graph import DepGraph
 
 
 class PathDesignation(Enum):
@@ -74,13 +73,13 @@ class PathStats(object):
 
             dependency_parse = eval(row.dependency_parse)
 
-            links = _utility.get_links(dependency_parse)
+            links = __utility.get_links(dependency_parse)
 
             ent1_indexes = [index for index in range(int(row.ent1_start), int(row.ent1_end) + 1)]
-            ent1_head = _utility.get_head(links, ent1_indexes)
+            ent1_head = __utility.get_head(links, ent1_indexes)
 
             ent2_indexes = [index for index in range(int(row.ent2_start), int(row.ent2_end) + 1)]
-            ent2_head = _utility.get_head(links, ent2_indexes)
+            ent2_head = __utility.get_head(links, ent2_indexes)
 
             trigger_index = int(row.trigger_idx)
             graph = DepGraph(links)
