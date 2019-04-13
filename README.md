@@ -2,12 +2,14 @@
 
 The relation-extraction-utils project is an assembly of Python 3 packages used by Or, Shachar and Jonathan in support of their graduate work in the field of rules based systems for relation extraction.
 
+
+
 ## Packages
 
 | Package | Purpose |
 |---|---|
-| prepare_for_trigger_identification | Defines the 'generate_cvs_file' module |
-| count_trigger_paths | Defines the 'PathStats' class, which receives a pre-populated CVS file containing sentences from the TAC Relation Extraction Dataset identified as containing a given relationship, and calculates paths from trigger word to relation entities, and between the entities themselves |
+| prepare_for_trigger_identification | Given a TAC Relation Extraction Dataset in json format, and a given relation (e.g. 'per:employee_of'), the purpose of this package is to provide functionality for extracting all sentences where the relation is tagged in the dataset, parsing the relevant sentence into a Universal Dependency  v2 trees (using [stanfordnlp](<https://stanfordnlp.github.io/stanfordnlp/>)), producing a comma delimited file in which the researcher is then expected to identify **trigger words** |
+| count_trigger_paths | Defines the 'PathStats' class, which receives a pre-populated command delimited file containing sentences from the TAC Relation Extraction Dataset identified as containing a given relationship, and calculates paths from trigger word to relation entities, and between the entities themselves |
 |  |  |
 
 ## Setup
