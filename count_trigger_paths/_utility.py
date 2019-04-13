@@ -5,7 +5,7 @@ import networkx
 Link = namedtuple('Link', 'word, word_index, governor, governor_index, dep_type')
 
 
-def get_links(unprocessed_links):
+def _get_links(unprocessed_links):
     links = []
 
     for unprocessed_link in unprocessed_links:
@@ -20,7 +20,7 @@ def get_links(unprocessed_links):
     return links
 
 
-def get_head(links, nodes):
+def _get_head(links, nodes):
     graph = __get_networkx_digraph(links)
 
     for potential_head in nodes:
