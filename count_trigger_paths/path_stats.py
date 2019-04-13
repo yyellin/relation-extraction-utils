@@ -11,19 +11,15 @@ Stat = namedtuple('Stat', 'frequency, path')
 
 
 class PathDesignation(Enum):
+
     TRIGGER_TO_ENTITY1 = 'Trigger to Entity 1'
     TRIGGER_TO_ENTITY2 = 'Trigger to Entity 2'
     ENTITY1_TO_ENTITY2 = 'Entity 1 to Entity 2'
 
 
 class PathStats(object):
-    '''
-    '''
 
     def __init__(self, input_file):
-        '''
-
-        '''
 
         self.__trigger_to_entity1_histogram = defaultdict(int)
         self.__trigger_to_entity2_histogram = defaultdict(int)
@@ -35,13 +31,13 @@ class PathStats(object):
         for row in train_data.itertuples():
             dependency_parse = eval(row.dependency_parse)
 
-            links = _utility.get_links(dependency_parse)
+            links = _utility._get_links(dependency_parse)
 
             ent1_indexes = [index for index in range(int(row.ent1_start), int(row.ent1_end) + 1)]
-            ent1_head = _utility.get_head(links, ent1_indexes)
+            ent1_head = _utility._get_head(links, ent1_indexes)
 
             ent2_indexes = [index for index in range(int(row.ent2_start), int(row.ent2_end) + 1)]
-            ent2_head = _utility.get_head(links, ent2_indexes)
+            ent2_head = _utility._get_head(links, ent2_indexes)
 
             trigger_index = int(row.trigger_idx)
             graph = DepGraph(links)
