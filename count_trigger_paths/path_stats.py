@@ -5,6 +5,7 @@ from enum import Enum
 import pandas
 
 from count_trigger_paths.__dep_graph import DepGraph
+from count_trigger_paths.__utility import get_head, get_links
 
 
 class PathDesignation(Enum):
@@ -36,8 +37,8 @@ class PathStats(object):
        1. trigger_idx
        2. ent1_start
        3. ent1_end
-       4. ent1_end
-       5. ent2_start
+       4. ent2_start
+       5. ent2_end
     On initialisation a PathStats object will parse the cvs fail and record the histograms in it's  __histograms
     private property.
 
@@ -73,13 +74,13 @@ class PathStats(object):
 
             dependency_parse = eval(row.dependency_parse)
 
-            links = __utility.get_links(dependency_parse)
+            links = get_links(dependency_parse)
 
             ent1_indexes = [index for index in range(int(row.ent1_start), int(row.ent1_end) + 1)]
-            ent1_head = __utility.get_head(links, ent1_indexes)
+            ent1_head = get_head(links, ent1_indexes)
 
             ent2_indexes = [index for index in range(int(row.ent2_start), int(row.ent2_end) + 1)]
-            ent2_head = __utility.get_head(links, ent2_indexes)
+            ent2_head = get_head(links, ent2_indexes)
 
             trigger_index = int(row.trigger_idx)
             graph = DepGraph(links)
