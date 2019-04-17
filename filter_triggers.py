@@ -1,13 +1,10 @@
 import pandas as pd
 import argparse
 import spacy
-from spacy.lemmatizer import Lemmatizer
-from spacy.lang.en import LEMMA_INDEX, LEMMA_EXC, LEMMA_RULES
 from itertools import zip_longest
 
 
 nlp = spacy.load("en_core_web_lg")
-lm = Lemmatizer(LEMMA_INDEX, LEMMA_EXC, LEMMA_RULES)
 print("Done loading.\n")
 
 
@@ -30,7 +27,8 @@ def print_triggers_oracle(file_name):
         if doc[index].text == trigger:
             trigger_words.add((doc[index]).lemma_)
         else:  # in case there is a different in the parsing:
-            trigger_words.add(lm(trigger, "verb")[0])
+            doc = nlp(trigger)[0]
+            trigger_words.add(doc.lemma_)
     print(trigger_words)
     return trigger_words
 
