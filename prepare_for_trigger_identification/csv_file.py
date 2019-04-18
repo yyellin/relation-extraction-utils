@@ -38,8 +38,10 @@ def generate_csv_file(train_data_path, relation_name, csv_file_path, batch_size=
             parsed_sentence = nlp(sentence)
             parsed_sentences.append(parsed_sentence)
 
-        output_file = '{0}-{1}.csv'.format(csv_file_path_without_suffix, batch_count) if batch_size is not None \
-            else output_file = '{0}.csv'.format(csv_file_path_without_suffix)
+        if batch_size is None:
+            output_file = '{0}.csv'.format(csv_file_path_without_suffix)
+        else:
+            output_file = '{0}-{1}.csv'.format(csv_file_path_without_suffix, batch_count)
 
         with open(output_file, 'w', newline='') as myfile:
             fieldnames = ['counter', 'sentence', 'ent1', 'ent2',
