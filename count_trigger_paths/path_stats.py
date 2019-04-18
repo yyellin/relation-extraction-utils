@@ -18,7 +18,8 @@ class PathDesignation(Enum):
 
     TRIGGER_TO_ENTITY1 = 'Trigger to Entity 1'
     TRIGGER_TO_ENTITY2 = 'Trigger to Entity 2'
-    ENTITY1_TO_ENTITY2 = 'Entity 1 to Entity 2'
+    ENTITY1_TO_ENTITY2_VIA_TRIGGER = 'Entity 1 to Entity 2 via trigger'
+    ENTITY1_TO_ENTITY2 = 'Entity 1 to Entity 2 direct'
 
 
 class Stat(namedtuple('Stat', 'frequency, path')):
@@ -85,9 +86,16 @@ class PathStats(object):
             trigger_index = int(row.trigger_idx)
             graph = DepGraph(links)
 
-            for path_designation, path in zip(PathDesignation, [graph.get_steps(trigger_index, ent1_head),
-                                                                graph.get_steps(trigger_index, ent2_head),
-                                                                graph.get_steps(ent1_head, ent2_head)]):
+            trigger_to_ent2 = graph.get_steps(trigger_index, ent2_head)
+            trigger_to_ent1 = graph.get_steps(trigger_index, ent1_head)
+            ent1_to_trigger = graph.get_steps(ent1_head, trigger_index)
+            ent1_to_ent2_via_trigger = '{0}-><-{1}'.format(ent1_to_trigger, trigger_to_ent2)
+            ent1_to_ent2 = graph.get_steps(ent1_head, ent2_head)
+
+            for path_designation, path in zip(PathDesignation, [trigger_to_ent1,
+                                                                trigger_to_ent2,
+                                                                ent1_to_ent2_via_trigger,
+                                                                ent1_to_ent2]):
                 self.__histograms[path_designation][path] += 1
 
 
