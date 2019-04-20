@@ -3,9 +3,9 @@ from setuptools import setup
 setup(
     name='relation_extraction_utils',
     version='',
-    packages=['count_trigger_paths', 'prepare_for_trigger_identification'],
+    packages=['relation_extraction_utils'],
     url='https://github.com/comp-aspects-of-appl-linguistics/relation_extraction_utils',
-    license='ASL 2.0',
+    license='GPLv3',
     author='Or, Shachar, Jonathan',
     author_email='',
     description='Various utilities for processing and analyzing relation extraction related data',

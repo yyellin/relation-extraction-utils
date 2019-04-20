@@ -4,8 +4,8 @@ from enum import Enum
 
 import pandas
 
-from count_trigger_paths.__dep_graph import DepGraph
-from count_trigger_paths.__utility import get_head, get_links
+from relation_extraction_utils.dep_graph import DepGraph
+from relation_extraction_utils.link import Link
 
 
 class PathDesignation(Enum):
@@ -75,13 +75,13 @@ class PathStats(object):
 
             dependency_parse = eval(row.dependency_parse)
 
-            links = get_links(dependency_parse)
+            links = Link.get_links(dependency_parse)
 
             ent1_indexes = [index for index in range(int(row.ent1_start), int(row.ent1_end) + 1)]
-            ent1_head = get_head(links, ent1_indexes)
+            ent1_head = Link.get_head(links, ent1_indexes)
 
             ent2_indexes = [index for index in range(int(row.ent2_start), int(row.ent2_end) + 1)]
-            ent2_head = get_head(links, ent2_indexes)
+            ent2_head = Link.get_head(links, ent2_indexes)
 
             trigger_index = int(row.trigger_idx)
             graph = DepGraph(links)
@@ -89,7 +89,7 @@ class PathStats(object):
             trigger_to_ent2 = graph.get_steps(trigger_index, ent2_head)
             trigger_to_ent1 = graph.get_steps(trigger_index, ent1_head)
             ent1_to_trigger = graph.get_steps(ent1_head, trigger_index)
-            ent1_to_ent2_via_trigger = '{0}-><-{1}'.format(ent1_to_trigger, trigger_to_ent2)
+            ent1_to_ent2_via_trigger = '{0} >< {1}'.format(ent1_to_trigger, trigger_to_ent2)
             ent1_to_ent2 = graph.get_steps(ent1_head, ent2_head)
 
             for path_designation, path in zip(PathDesignation, [trigger_to_ent1,
