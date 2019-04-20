@@ -4,8 +4,8 @@ from enum import Enum
 
 import pandas
 
-from relation_extraction_utils.dep_graph import DepGraph
-from relation_extraction_utils.link import Link
+from relation_extraction_utils.internal.dep_graph import DepGraph
+from relation_extraction_utils.internal.link import Link
 
 
 class PathDesignation(Enum):

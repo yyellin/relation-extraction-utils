@@ -1,7 +1,7 @@
 import pandas as pd
 
-from relation_extraction_utils.dep_graph import DepGraph
-from relation_extraction_utils.link import Link
+from relation_extraction_utils.internal.dep_graph import DepGraph
+from relation_extraction_utils.internal.link import Link
 
 FOUNDED_BY_TRIGGERS = {'create',
                        'find',

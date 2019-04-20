@@ -4,7 +4,7 @@ import json
 
 import stanfordnlp
 
-from relation_extraction_utils.detokenizer import Detokenizer
+from relation_extraction_utils.internal.detokenizer import Detokenizer
 
 
 def generate_csv_file(train_data_path, relation_name, csv_file_path, batch_size=None):
