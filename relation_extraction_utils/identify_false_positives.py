@@ -1,3 +1,5 @@
+import csv
+
 import pandas as pd
 
 from relation_extraction_utils.internal.dep_graph import DepGraph
@@ -45,14 +47,8 @@ def filter_sen(data, trigger_list):
     return data
 
 
-def identify_false_positives(data, triggers, paths):
-    indices = []
-
-    for idx, row in data.iterrows():
-
-        trigger = False
-        # if 'he founded and directed the National Environmental Trust' in row.sentence:
-        #    print('lets debug')
+def identify_false_positives(input_rows, csv_out, triggers, paths):
+    for idx, row in input_rows.iterrows():
 
         dependency_parse = eval(row['dependency_parse'])
         links = Link.get_links(dependency_parse)
@@ -81,22 +77,48 @@ def identify_false_positives(data, triggers, paths):
                 ent1_to_ent2_via_trigger = '{0} >< {1}'.format(ent1_to_trigger, trigger_to_ent2)
 
                 if ent1_to_ent2_via_trigger in paths:
-                    print('FALSE POSITIVE!!!!')
+
+                    if word in triggers:
+                        trigger = word
+                        matched_lemma = False
+                    else:
+                        trigger = lemma
+                        matched_lemma = True
+
+                    ent1 = ' '.join([links[idx - 1].word for idx in ent1_indexes])
+                    ent2 = ' '.join([links[idx - 1].word for idx in ent2_indexes])
+
+                    csv_out.writerow([row.sentence, trigger, matched_lemma, ent1, ent2, ent1_to_ent2_via_trigger])
                     print("sentence: ", row.sentence)
                     print('trigger: {} (lemma: {})'.format(word, lemma))
-                    print('ent1: {}'.format(' '.join([links[idx - 1].word for idx in ent1_indexes])))
-                    print('ent2: {}'.format(' '.join([links[idx - 1].word for idx in ent2_indexes])))
+                    print('ent1: {}'.format(ent1))
+                    print('ent2: {}'.format(ent2))
                     print('path: ', ent1_to_ent2_via_trigger)
                     print()
-                    wait_here = True
 
 
 def main():
-    # for creating a new triggers list:
-    # print_triggers_oracle(args.relation)
-    data = pd.read_csv(r'C:\Users\jyellin\Desktop\no-relation\no_relation5000-0.csv')
+    # See here for guidance on how to get the encoding right (as we need to deal with the '↑' and '↓' characters
+    # https://stackoverflow.com/questions/6493876/python-save-csv-file-in-utf-16le
 
-    identify_false_positives(data, FOUNDED_BY_TRIGGERS, FOUNDED_BY_FREQUENT_PATHS)
+    with open('false_positives.csv', 'w', encoding='utf_16', newline='') as output_file:
+        csv_out = csv.writer(output_file, delimiter='\t')
+
+        csv_out.writerow(['sentence', 'trigger', 'matched-lemma', 'ent1', 'ent2', 'path'])
+
+        for input_file in [r'C:\Users\jyellin\Desktop\no-relation\no_relation5000-0.csv',
+                           r'C:\Users\jyellin\Desktop\no-relation\no_relation5000-1.csv',
+                           r'C:\Users\jyellin\Desktop\no-relation\no_relation5000-2.csv',
+                           r'C:\Users\jyellin\Desktop\no-relation\no_relation5000-3.csv',
+                           r'C:\Users\jyellin\Desktop\no-relation\no_relation5000-4.csv',
+                           r'C:\Users\jyellin\Desktop\no-relation\no_relation5000-5.csv',
+                           r'C:\Users\jyellin\Desktop\no-relation\no_relation5000-6.csv',
+                           r'C:\Users\jyellin\Desktop\no-relation\no_relation5000-7.csv',
+                           r'C:\Users\jyellin\Desktop\no-relation\no_relation5000-8.csv',
+                           r'C:\Users\jyellin\Desktop\no-relation\no_relation5000-9.csv']:
+            input_rows = pd.read_csv(input_file)
+            identify_false_positives(input_rows, csv_out, FOUNDED_BY_TRIGGERS, FOUNDED_BY_FREQUENT_PATHS)
+
 
     wait_here = True
     # data.to_csv(args.output, index=False)

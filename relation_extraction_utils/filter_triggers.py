@@ -1,8 +1,8 @@
-import pandas as pd
 import argparse
-import spacy
 from itertools import zip_longest
 
+import pandas as pd
+import spacy
 
 nlp = spacy.load("en_core_web_lg")
 print("Done loading.\n")
