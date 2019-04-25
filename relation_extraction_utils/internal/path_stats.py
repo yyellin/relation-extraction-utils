@@ -185,8 +185,3 @@ class PathStats(object):
 
         return str
 
-#        return ' '.join(['{0}{1}{3}'.format(step.dep_direction,
-#                                            step.dependency,
-#                                            '({0}/{1})'.format(pss_tags[step.me][0],pss_tags[step.me][0]) if step.me in pss_tags.keys() else ''
-#                                            )
-#                         for step in steps])
