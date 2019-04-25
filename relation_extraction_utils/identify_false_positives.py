@@ -1,9 +1,11 @@
+import argparse
 import csv
 
 import pandas as pd
 
 from relation_extraction_utils.internal.dep_graph import DepGraph
 from relation_extraction_utils.internal.link import Link
+from relation_extraction_utils.internal.path_stats import PathStats
 
 FOUNDED_BY_TRIGGERS = {'create',
                        'find',
@@ -39,15 +41,22 @@ FOUNDED_BY_FREQUENT_PATHS = {'↑nmod:poss ↑case >< ↓case',
                              '↑acl:relcl >< ↑obl'}
 
 
-def filter_sen(data, trigger_list):
-    """
-    drop all rows that doesn't contains any trigger word
-    """
-    ##    data.drop(without_triggers(data, trigger_list), inplace=True)
-    return data
+def identify_false_positives(input_files, output_file):
+    # See here for guidance on how to get the encoding right (as we need to deal with the '↑' and '↓' characters
+    # https://stackoverflow.com/questions/6493876/python-save-csv-file-in-utf-16le
+
+    with open(output_file, 'w', encoding='utf_16', newline='') as f:
+        csv_out = csv.writer(f, delimiter='\t')
+
+        csv_out.writerow(['sentence', 'trigger', 'matched-lemma', 'ent1', 'ent2', 'path'])
+
+        for input_file in input_files:
+            print('processing ', input_file)
+            input_rows = pd.read_csv(input_file)
+            __identify_matches(input_rows, csv_out, FOUNDED_BY_TRIGGERS, FOUNDED_BY_FREQUENT_PATHS)
 
 
-def identify_false_positives(input_rows, csv_out, triggers, paths):
+def __identify_matches(input_rows, csv_out, triggers, paths):
     for idx, row in input_rows.iterrows():
 
         dependency_parse = eval(row['dependency_parse'])
@@ -72,8 +81,8 @@ def identify_false_positives(input_rows, csv_out, triggers, paths):
 
                 graph = DepGraph(links)
 
-                trigger_to_ent2 = graph.get_steps(trigger_index, ent2_head)
-                ent1_to_trigger = graph.get_steps(ent1_head, trigger_index)
+                trigger_to_ent2 = PathStats.get_steps_as_string(graph.get_steps(trigger_index, ent2_head))
+                ent1_to_trigger = PathStats.get_steps_as_string(graph.get_steps(ent1_head, trigger_index))
                 ent1_to_ent2_via_trigger = '{0} >< {1}'.format(ent1_to_trigger, trigger_to_ent2)
 
                 if ent1_to_ent2_via_trigger in paths:
@@ -97,41 +106,23 @@ def identify_false_positives(input_rows, csv_out, triggers, paths):
                     print()
 
 
-def main():
-    # See here for guidance on how to get the encoding right (as we need to deal with the '↑' and '↓' characters
-    # https://stackoverflow.com/questions/6493876/python-save-csv-file-in-utf-16le
-
-    with open('false_positives.csv', 'w', encoding='utf_16', newline='') as output_file:
-        csv_out = csv.writer(output_file, delimiter='\t')
-
-        csv_out.writerow(['sentence', 'trigger', 'matched-lemma', 'ent1', 'ent2', 'path'])
-
-        for input_file in [r'C:\Users\jyellin\Desktop\no-relation\no_relation5000-0.csv',
-                           r'C:\Users\jyellin\Desktop\no-relation\no_relation5000-1.csv',
-                           r'C:\Users\jyellin\Desktop\no-relation\no_relation5000-2.csv',
-                           r'C:\Users\jyellin\Desktop\no-relation\no_relation5000-3.csv',
-                           r'C:\Users\jyellin\Desktop\no-relation\no_relation5000-4.csv',
-                           r'C:\Users\jyellin\Desktop\no-relation\no_relation5000-5.csv',
-                           r'C:\Users\jyellin\Desktop\no-relation\no_relation5000-6.csv',
-                           r'C:\Users\jyellin\Desktop\no-relation\no_relation5000-7.csv',
-                           r'C:\Users\jyellin\Desktop\no-relation\no_relation5000-8.csv',
-                           r'C:\Users\jyellin\Desktop\no-relation\no_relation5000-9.csv']:
-            input_rows = pd.read_csv(input_file)
-            identify_false_positives(input_rows, csv_out, FOUNDED_BY_TRIGGERS, FOUNDED_BY_FREQUENT_PATHS)
-
-
-    wait_here = True
-    # data.to_csv(args.output, index=False)
-
 
 if __name__ == "__main__":
-    main()
-    # arg_parser = argparse.ArgumentParser(description="create list of trigger"
-    #                                                 " words for a certain "
-    #                                                 "relation")
-    # arg_parser.add_argument("input", help="csv file to filter")
-    # arg_parser.add_argument("-r", "--relation",
-    #                        help="relation csv file for creating an oracle")
-    # arg_parser.add_argument("-o", "--output", help="file after filtering")
+    arg_parser = argparse.ArgumentParser(description="identify relationships in input csv file "
+                                                     "that match given paths and trigger words "
+                                                     "(and as such can be viewed as false positives) "
+                                                     "NOTE: the paths and trigger words are currently "
+                                                     "hardcoded in the module")
 
-    # main(arg_parser.parse_args())
+    arg_parser.add_argument('false_positive_output_file',
+                            metavar='false-positive-output-file',
+                            help="path of the csv to contain false positives")
+
+    arg_parser.add_argument('relation_input_files',
+                            metavar='csv-input-files',
+                            nargs='+',
+                            help="paths of one or more csv file containing relations to analyze")
+
+    args = arg_parser.parse_args()
+
+    identify_false_positives(args.relation_input_files, args.false_positive_output_file)
