@@ -181,7 +181,6 @@ class PathStats(object):
 
             if step.me in pss_tags.keys():
                 str = str + '({0}/{1})'.format(pss_tags[step.me][1], pss_tags[step.me][2])
-                wait_here = True
 
         return str
 
