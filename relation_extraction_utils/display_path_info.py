@@ -23,14 +23,14 @@ def display_path_histograms(csv_file):
 def list_sentences_by_path(csv_file):
     pathstats = PathStats(csv_file)
 
-    paths = pathstats.get_top_n_paths(PathDesignation.ENTITY1_TO_ENTITY2_VIA_TRIGGER, 100)
+    stats = pathstats.get_sorted_stats(PathDesignation.ENTITY1_TO_ENTITY2_VIA_TRIGGER, reverse=True)
 
-    for path in paths:
-        print('{}:'.format(path))
+    for frequency, path in stats:
+        print('{} ({})'.format(path, frequency))
 
-        for count, sentence in enumerate(
-                pathstats.get_path_sentences(PathDesignation.ENTITY1_TO_ENTITY2_VIA_TRIGGER, path), start=1):
-            print(' {}:{}'.format(count, sentence))
+    # for count, sentence in enumerate(
+    #         pathstats.get_path_sentences(PathDesignation.ENTITY1_TO_ENTITY2_VIA_TRIGGER, path), start=1):
+    #     print(' {}:{}'.format(count, sentence))
 
 
 
@@ -43,5 +43,5 @@ if __name__ == "__main__":
                             help="the path of the csv input file")
 
     args = arg_parser.parse_args()
-    # list_sentences_by_path(args.csv_file_path)
-    display_path_histograms(args.csv_file_path)
+    list_sentences_by_path(args.csv_file_path)
+    # display_path_histograms(args.csv_file_path)
