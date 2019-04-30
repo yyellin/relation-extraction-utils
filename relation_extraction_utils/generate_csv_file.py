@@ -96,8 +96,8 @@ def generate_csv_file(train_data_path, relation_name, csv_file_path, batch_size=
         csv_out.writerow([count, sentence, obj, subj,
                           dependencies, index_lookup_str, lemmas,
                           None, None,
-                          subj_start, subj_end,
-                          obj_start, obj_end,
+                          subj_start + 1, subj_end + 1,
+                          obj_start + 1, obj_end + 1,
                           None
                           ])
 
