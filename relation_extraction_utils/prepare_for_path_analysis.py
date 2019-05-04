@@ -17,7 +17,7 @@ from relation_extraction_utils.internal.map_csv_column import MapCsvColumns
 from relation_extraction_utils.internal.sync_indices import SyncIndices
 
 
-def prepare_for_path_analysis(input_file=None, output_file=None, batch_size=None):
+def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
     """
 
      Parameters
@@ -27,7 +27,7 @@ def prepare_for_path_analysis(input_file=None, output_file=None, batch_size=None
      -------
 
     """
-
+    output_file = output_file[:-len('.csv')] if output_file.endswith('.csv') else output_file
     input = open(input_file) if input_file is not None else sys.stdin
     cvs_reader = csv.reader(input)
 
@@ -52,24 +52,23 @@ def prepare_for_path_analysis(input_file=None, output_file=None, batch_size=None
 
         new_file = False
 
-        # first case: we've just started and need to write to standard output
-        if count == 0 and output_file is None:
-            output = sys.stdout
+        # first option: we've just started but no batching
+        if count == 0 and batch_size is None:
+            output_file_actual = '{0}.csv'.format(output_file)
+
+            output = open(output_file_actual, 'w', newline='')
+
             new_file = True
 
-        # second case: we've just started and need to write to file but no batching
-        if count == 0 and output_file is not None and batch_size is None:
-            output = open(output_file, 'w', newline='')
-            new_file = True
-
-        # third case: we've finished a batch (and we are batching
-        if count % batch_size == 0 and output_file is not None and batch_size is not None:
-            output_file_numbered = '{0}.{1}'.format(output_file, batch)
+        # second case: we've finished a batch (and we are batching..)
+        if count % batch_size == 0 and batch_size is not None:
+            output_file_actual = '{0}-{1}.csv'.format(output_file, batch)
 
             if output is not None:
                 output.close()
 
-            output = open(output_file_numbered, 'w', newline='')
+            output = open(output_file_actual, 'w', newline='')
+
             batch += 1
             new_file = True
 
@@ -130,16 +129,16 @@ if __name__ == "__main__":
                     'ent1, ent2, ud_parse, tokens, lemmas.')
 
     arg_parser.add_argument(
+        'output',
+        action='store',
+        metavar='output-file',
+        help='the comma-seperated field output file')
+
+    arg_parser.add_argument(
         '--input',
         action='store',
         metavar='input-file',
         help='when provided input will be read from this file rather than from standard input')
-
-    arg_parser.add_argument(
-        '--output',
-        action='store',
-        metavar='output-file',
-        help='when provided output will be written to this file rather than to standard output')
 
     arg_parser.add_argument(
         '--batch-size',
@@ -151,6 +150,6 @@ if __name__ == "__main__":
 
     args = arg_parser.parse_args()
 
-    prepare_for_path_analysis(input_file=args.input, output_file=args.output, batch_size=args.batch_size)
+    prepare_for_path_analysis(output_file=args.output, input_file=args.input, batch_size=args.batch_size)
 
 #    convert_tac_to_csv(input, output, args.relation)
