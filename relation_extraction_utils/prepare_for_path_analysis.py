@@ -96,6 +96,8 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
 
         ud_parse.sort(key=lambda x: int(x[0]))
 
+        print('we are here no crash')
+
         original_entity_lookup = {}
         original_entity_lookup['subj_start'] = entry['subj_start']
         original_entity_lookup['subj_end'] = entry['subj_end']
