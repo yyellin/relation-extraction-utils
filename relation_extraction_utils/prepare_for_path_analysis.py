@@ -107,6 +107,9 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
 
         if len(token_lookup) != len(tac_tokens_reverse_lookup):
             print('Big problems for sentence: {0}'.format(sentence))
+            print('token_lookup {0}'.format(token_lookup))
+            print('tac_tokens_reverse_lookup {0}'.format(tac_tokens_reverse_lookup))
+
             print('skipping ...')
             continue
 
