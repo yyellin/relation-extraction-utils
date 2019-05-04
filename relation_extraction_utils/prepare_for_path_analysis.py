@@ -159,25 +159,26 @@ if __name__ == "__main__":
 
     args = arg_parser.parse_args()
 
-    list_a = ['(', 'ABC', ')', ',', 'Tom', 'Thabane', 'resigned', 'in', 'October', 'last', 'year', 'to', 'form', 'the',
-              'All', 'Basotho',
-              'Convention', 'crossing', 'the', 'floor', 'with', '17', 'members', 'of',
-              'parliament', ',', 'causing', 'constitutional', 'monarch', 'King', 'Letsie', 'III', 'to', 'dissolve',
-              'parliament', 'and', 'call', 'the', 'snap', 'election', '.']
+    list_a = ['A', 'co-founder', 'of', 'the', 'Nashville', '-', 'based', 'Country', 'Music', 'Association', 'who',
+              'spent', 'more', 'than', 'two', 'decades', 'in', 'charge', 'of', 'Capitol', "'s", 'country', 'music',
+              'division', ',', 'Nelson', 'produced', 'upward', 'of', '100', 'No']
 
-    list_b = ['-LRB-', 'ABC', '-RRB-', ',', 'Tom', 'Thabane', 'resigned', 'in', 'October', 'last', 'year', 'to', 'form',
-              'the', 'All', 'Basotho',
-              'Convention', 'crossing', 'the', 'floor', 'with', '17', 'members', 'of',
-              'parliament', ',', 'causing', 'constitutional', 'monarch', 'King', 'Letsie', 'III', 'to', 'dissolve',
-              'parliament', 'and', 'call', 'the', 'snap', 'election', '.']
+    list_b = ['A', 'co-founder', 'of', 'the', 'Nashville-based', 'Country', 'Music', 'Association', 'who', 'spent',
+              'more', 'than', 'two', 'decades', 'in', 'charge', 'of', 'Capitol', "'s", 'country', 'music', 'division',
+              ',', 'Nelson', 'produced', 'upward', 'of', '100', 'No']
 
     original_entity_lookup = {}
-    original_entity_lookup['14'] = 'ent1_start'
-    original_entity_lookup['16'] = 'ent1_end'
-    original_entity_lookup['4'] = 'ent2_start'
-    original_entity_lookup['5'] = 'ent2_end'
+    original_entity_lookup['subj_start'] = 5
+    original_entity_lookup['subj_end'] = 7
+    original_entity_lookup['obj_start'] = 1
+    original_entity_lookup['obj_end'] = 1
 
     look = SyncIndices.b_lookup_to_a_lookup(list_a, list_b, original_entity_lookup)
+
+    if len(look) != len(original_entity_lookup):
+        print('got problem')
+    else:
+        print('ggod')
 
     prepare_for_path_analysis(output_file=args.output, input_file=args.input, batch_size=args.batch_size)
 
