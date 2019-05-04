@@ -159,19 +159,14 @@ if __name__ == "__main__":
 
     args = arg_parser.parse_args()
 
-    list_a = ['A', 'co-founder', 'of', 'the', 'Nashville', '-', 'based', 'Country', 'Music', 'Association', 'who',
-              'spent', 'more', 'than', 'two', 'decades', 'in', 'charge', 'of', 'Capitol', "'s", 'country', 'music',
-              'division', ',', 'Nelson', 'produced', 'upward', 'of', '100', 'No']
-
-    list_b = ['A', 'co-founder', 'of', 'the', 'Nashville-based', 'Country', 'Music', 'Association', 'who', 'spent',
-              'more', 'than', 'two', 'decades', 'in', 'charge', 'of', 'Capitol', "'s", 'country', 'music', 'division',
-              ',', 'Nelson', 'produced', 'upward', 'of', '100', 'No']
+    list_a = ['ABC', 'DEF', 'GHI', 'blah', 'blaah', '123', '456', '789']
+    list_b = ['ABCDEF', 'GHI', 'blah', 'blaah', '123456789']
 
     original_entity_lookup = {}
-    original_entity_lookup['subj_start'] = 5
-    original_entity_lookup['subj_end'] = 7
-    original_entity_lookup['obj_start'] = 1
-    original_entity_lookup['obj_end'] = 1
+    original_entity_lookup['subj_start'] = 0
+    original_entity_lookup['subj_end'] = 1
+    original_entity_lookup['obj_start'] = 4
+    original_entity_lookup['obj_end'] = 4
 
     look = SyncIndices.b_lookup_to_a_lookup(list_a, list_b, original_entity_lookup)
 
