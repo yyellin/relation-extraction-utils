@@ -88,11 +88,13 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
             ud_parse.append((word.index, word.text, dep, governor.index, governor.text))
 
         tokens = []
-        lemmas = []
+        tokens_with_indices = []
+        lemmas_with_indices = []
         for token in parsed_sentence.sentences[0].tokens:
             for word in token.words:
-                tokens.append((word.index, word.text))
-                lemmas.append((word.index, word.lemma))
+                tokens.append(word.text)
+                tokens_with_indices.append((word.index, word.text))
+                lemmas_with_indices.append((word.index, word.lemma))
 
         ud_parse.sort(key=lambda x: int(x[0]))
 
@@ -102,8 +104,7 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
         tac_tokens_reverse_lookup[map_columns.get_field_value(entry, 'obj_start')] = 'obj_start'
         tac_tokens_reverse_lookup[map_columns.get_field_value(entry, 'obj_end')] = 'obj_end'
 
-        token_lookup = SyncIndices.b_reverselookup_to_a_lookup(tac_tokens, [token for _, token in tokens],
-                                                               tac_tokens_reverse_lookup)
+        token_lookup = SyncIndices.b_reverselookup_to_a_lookup(tac_tokens, tokens, tac_tokens_reverse_lookup)
 
         if len(token_lookup) != len(tac_tokens_reverse_lookup):
             print('Big problems for sentence: {0}'.format(sentence))
@@ -115,15 +116,16 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
 
         ent1_start = token_lookup['subj_start']
         ent1_end = token_lookup['subj_end']
-        ent1 = ' '.join(tokens[ent1_start:ent1_end + 1])
+        ent1 = ' '.join(tokens_with_indices[ent1_start:ent1_end + 1])
 
         ent2_start = token_lookup['obj_start']
         ent2_end = token_lookup['obj_end']
-        ent2 = ' '.join(tokens[ent2_start:ent2_end + 1])
+        ent2 = ' '.join(tokens_with_indices[ent2_start:ent2_end + 1])
 
         csv_out.writerow(
-            [count, sentence, ent2, ent1, ent1_start + 1, ent1_end + 1, ent2_start + 1, ent2_end + 1, ud_parse, tokens,
-             lemmas])
+            [count, sentence, ent2, ent1, ent1_start + 1, ent1_end + 1, ent2_start + 1, ent2_end + 1, ud_parse,
+             tokens_with_indices,
+             lemmas_with_indices])
 
 
 if __name__ == "__main__":
