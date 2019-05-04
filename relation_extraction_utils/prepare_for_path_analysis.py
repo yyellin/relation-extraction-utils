@@ -114,6 +114,8 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
             print('skipping ...')
             continue
 
+        print('tac tokens: {0}'.format(tac_tokens))
+        print('good tokens: {0}'.format(tokens))
         print('token_lookup {0}'.format(token_lookup))
         print('tac_tokens_reverse_lookup {0}'.format(tac_tokens_reverse_lookup))
 
