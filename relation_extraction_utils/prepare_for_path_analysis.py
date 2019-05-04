@@ -60,7 +60,7 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
             new_file = True
 
         # second case: we've finished a batch (and we are batching..)
-        if count % batch_size == 0 and batch_size is not None:
+        if batch_size is not None and count % batch_size == 0:
             output_file_actual = '{0}-{1}.csv'.format(output_file, batch)
 
             if output is not None:
