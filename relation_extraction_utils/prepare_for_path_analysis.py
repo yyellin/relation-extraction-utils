@@ -41,15 +41,15 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
 
     for entry in csv_reader:
 
-        original_tokens = eval(map_columns.get_field_value(entry, 'original_tokens'))
-        sentence = detokenizer.detokenize(original_tokens)
+        tac_tokens = eval(map_columns.get_field_value(entry, 'original_tokens'))
+        sentence = detokenizer.detokenize(tac_tokens)
 
         parsed_sentence = nlp(sentence)
-
         # let's ignore sentences who parse into multiple sentences - so as to avoid confusion
         if len(parsed_sentence.sentences) > 1:
             continue
 
+        # the next few lines of code deal with opening and closing files (depending on the batching argument, etc)
         new_file = False
 
         # first option: we've just started but no batching
@@ -57,7 +57,6 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
             output_file_actual = '{0}.csv'.format(output_file)
 
             output = open(output_file_actual, 'w', newline='')
-
             new_file = True
 
         # second case: we've finished a batch (and we are batching..)
@@ -68,10 +67,10 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
                 output.close()
 
             output = open(output_file_actual, 'w', newline='')
-
             batch += 1
             new_file = True
 
+        # if we did create a new file, let's ensure that the first row consists of column titles
         if new_file:
             fieldnames = ['id', 'sentence', 'ent1', 'ent2', 'ent1_start', 'ent1_end', 'ent2_start', 'ent2_end',
                           'ud_parse', 'words', 'lemmas']
@@ -79,16 +78,17 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
             csv_out = csv.writer(output)
             csv_out.writerow(fieldnames)
 
+        # now that we've finished creating a new file as necessary, we can proceed with the business
+        # at hand:
+
         count += 1
 
         ud_parse = []
-
         for governor, dep, word in parsed_sentence.sentences[0].dependencies:
             ud_parse.append((word.index, word.text, dep, governor.index, governor.text))
 
         tokens = []
         lemmas = []
-
         for token in parsed_sentence.sentences[0].tokens:
             for word in token.words:
                 tokens.append((word.index, word.text))
@@ -96,31 +96,30 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
 
         ud_parse.sort(key=lambda x: int(x[0]))
 
-        print('we are here no crash')
+        tac_tokens_reverse_lookup = {}
+        tac_tokens_reverse_lookup[map_columns.get_field_value(entry, 'subj_start')] = 'subj_start'
+        tac_tokens_reverse_lookup[map_columns.get_field_value(entry, 'subj_end')] = 'subj_end'
+        tac_tokens_reverse_lookup[map_columns.get_field_value(entry, 'obj_start')] = 'obj_start'
+        tac_tokens_reverse_lookup[map_columns.get_field_value(entry, 'obj_end')] = 'obj_end'
 
-        original_entity_lookup = {}
-        original_entity_lookup['subj_start'] = entry['subj_start']
-        original_entity_lookup['subj_end'] = entry['subj_end']
-        original_entity_lookup['obj_start'] = entry['obj_start']
-        original_entity_lookup['obj_end'] = entry['obj_end']
+        token_lookup = SyncIndices.b_reverselookup_to_a_lookup(tac_tokens, [token for _, token in tokens],
+                                                               tac_tokens_reverse_lookup)
 
-        entity_lookup = SyncIndices.b_lookup_to_a_lookup(original_tokens, tokens, original_entity_lookup)
-
-        if len(entity_lookup) != len(original_entity_lookup):
+        if len(token_lookup) != len(tac_tokens_reverse_lookup):
             print('Big problems for sentence: {0}'.format(sentence))
             print('skipping ...')
             continue
 
-        subj_start = entity_lookup['subj_start']
-        subj_end = entity_lookup['subj_end']
-        subj = ' '.join(tokens[subj_start:subj_end + 1])
+        ent1_start = token_lookup['subj_start']
+        ent1_end = token_lookup['subj_end']
+        ent1 = ' '.join(tokens[ent1_start:ent1_end + 1])
 
-        obj_start = entity_lookup['obj_start']
-        obj_end = entity_lookup['obj_end']
-        obj = ' '.join(tokens[obj_start:obj_end + 1])
+        ent2_start = token_lookup['obj_start']
+        ent2_end = token_lookup['obj_end']
+        ent2 = ' '.join(tokens[ent2_start:ent2_end + 1])
 
         csv_out.writerow(
-            [count, sentence, obj, subj, subj_start + 1, subj_end + 1, obj_start + 1, obj_end + 1, ud_parse, tokens,
+            [count, sentence, ent2, ent1, ent1_start + 1, ent1_end + 1, ent2_start + 1, ent2_end + 1, ud_parse, tokens,
              lemmas])
 
 
@@ -151,6 +150,25 @@ if __name__ == "__main__":
         help="it's possible to generate the output file in batches (will be ignored if input is being written to standard output)")
 
     args = arg_parser.parse_args()
+
+    # list_a = ['Tom', 'Thabane', 'resigned', 'in', 'October', 'last', 'year', 'to', 'form', 'the', 'All', 'Basotho',
+    #           'Convention', '-LRB-', 'ABC', '-RRB-', ',', 'crossing', 'the', 'floor', 'with', '17', 'members', 'of',
+    #           'parliament', ',', 'causing', 'constitutional', 'monarch', 'King', 'Letsie', 'III', 'to', 'dissolve',
+    #           'parliament', 'and', 'call', 'the', 'snap', 'election', '.']
+    #
+    # list_b = ['Tom', 'Thabane', 'resigned', 'in', 'October', 'last', 'year', 'to', 'form', 'the', 'All', 'Basotho',
+    #           'Convention', '(', 'ABC', ')', ',', 'crossing', 'the', 'floor', 'with', '17', 'members', 'of',
+    #           'parliament', ',', 'causing', 'constitutional', 'monarch', 'King', 'Letsie', 'III', 'to', 'dissolve',
+    #           'parliament', 'and', 'call', 'the', 'snap', 'election', '.']
+    #
+    # original_entity_lookup = {}
+    # original_entity_lookup[10] = 'ent1_start'
+    # original_entity_lookup[12] = 'ent1_end'
+    # original_entity_lookup[0] = 'ent2_start'
+    # original_entity_lookup[1] = 'ent2_end'
+    #
+    # look = SyncIndices.b_reverselookup_to_a_lookup(list_a, list_b, original_entity_lookup)
+
 
     prepare_for_path_analysis(output_file=args.output, input_file=args.input, batch_size=args.batch_size)
 
