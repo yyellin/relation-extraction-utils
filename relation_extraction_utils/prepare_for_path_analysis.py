@@ -97,10 +97,10 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
         ud_parse.sort(key=lambda x: int(x[0]))
 
         tac_tokens_reverse_lookup = {}
-        tac_tokens_reverse_lookup[map_columns.get_field_value(entry, 'subj_start')] = 'subj_start'
-        tac_tokens_reverse_lookup[map_columns.get_field_value(entry, 'subj_end')] = 'subj_end'
-        tac_tokens_reverse_lookup[map_columns.get_field_value(entry, 'obj_start')] = 'obj_start'
-        tac_tokens_reverse_lookup[map_columns.get_field_value(entry, 'obj_end')] = 'obj_end'
+        tac_tokens_reverse_lookup[int(map_columns.get_field_value(entry, 'subj_start'))] = 'subj_start'
+        tac_tokens_reverse_lookup[int(map_columns.get_field_value(entry, 'subj_end'))] = 'subj_end'
+        tac_tokens_reverse_lookup[int(map_columns.get_field_value(entry, 'obj_start'))] = 'obj_start'
+        tac_tokens_reverse_lookup[int(map_columns.get_field_value(entry, 'obj_end'))] = 'obj_end'
 
         token_lookup = SyncIndices.b_reverselookup_to_a_lookup(tac_tokens, [token for _, token in tokens],
                                                                tac_tokens_reverse_lookup)
