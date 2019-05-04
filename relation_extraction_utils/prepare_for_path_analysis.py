@@ -107,18 +107,15 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
         token_lookup = SyncIndices.b_lookup_to_a_lookup(tac_tokens, tokens, tac_tokens_lookup)
 
         if len(token_lookup) != len(tac_tokens_lookup):
-            print('Big problems for sentence: {0}'.format(sentence))
+            print('Big problems:')
+            print('tac tokens: {0}'.format(tac_tokens))
+            print('good tokens: {0}'.format(tokens))
             print('token_lookup {0}'.format(token_lookup))
             print('tac_tokens_reverse_lookup {0}'.format(tac_tokens_lookup))
 
             print('skipping ...')
+            print()
             continue
-
-        print('tac tokens: {0}'.format(tac_tokens))
-        print('good tokens: {0}'.format(tokens))
-        print('token_lookup {0}'.format(token_lookup))
-        print('tac_tokens_reverse_lookup {0}'.format(tac_tokens_lookup))
-        print()
 
         ent1_start = token_lookup['subj_start']
         ent1_end = token_lookup['subj_end']
