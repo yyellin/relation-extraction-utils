@@ -22,7 +22,7 @@ class SyncIndices(object):
 
             if list_a[index_a] == list_b[index_b]:
                 if str(index_b) in list_b_lookup.keys():
-                    list_a_lookup[list_b_lookup[index_b]] = index_a
+                    list_a_lookup[list_b_lookup[str(index_b)]] = index_a
                     matched_so_far += 1
 
                 index_a += 1

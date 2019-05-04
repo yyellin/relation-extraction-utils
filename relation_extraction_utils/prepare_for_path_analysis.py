@@ -154,24 +154,25 @@ if __name__ == "__main__":
 
     args = arg_parser.parse_args()
 
-    # list_a = ['Tom', 'Thabane', 'resigned', 'in', 'October', 'last', 'year', 'to', 'form', 'the', 'All', 'Basotho',
-    #           'Convention', '-LRB-', 'ABC', '-RRB-', ',', 'crossing', 'the', 'floor', 'with', '17', 'members', 'of',
-    #           'parliament', ',', 'causing', 'constitutional', 'monarch', 'King', 'Letsie', 'III', 'to', 'dissolve',
-    #           'parliament', 'and', 'call', 'the', 'snap', 'election', '.']
-    #
-    # list_b = ['Tom', 'Thabane', 'resigned', 'in', 'October', 'last', 'year', 'to', 'form', 'the', 'All', 'Basotho',
-    #           'Convention', '(', 'ABC', ')', ',', 'crossing', 'the', 'floor', 'with', '17', 'members', 'of',
-    #           'parliament', ',', 'causing', 'constitutional', 'monarch', 'King', 'Letsie', 'III', 'to', 'dissolve',
-    #           'parliament', 'and', 'call', 'the', 'snap', 'election', '.']
-    #
-    # original_entity_lookup = {}
-    # original_entity_lookup[10] = 'ent1_start'
-    # original_entity_lookup[12] = 'ent1_end'
-    # original_entity_lookup[0] = 'ent2_start'
-    # original_entity_lookup[1] = 'ent2_end'
-    #
-    # look = SyncIndices.b_reverselookup_to_a_lookup(list_a, list_b, original_entity_lookup)
+    list_a = ['(', 'ABC', ')', ',', 'Tom', 'Thabane', 'resigned', 'in', 'October', 'last', 'year', 'to', 'form', 'the',
+              'All', 'Basotho',
+              'Convention', 'crossing', 'the', 'floor', 'with', '17', 'members', 'of',
+              'parliament', ',', 'causing', 'constitutional', 'monarch', 'King', 'Letsie', 'III', 'to', 'dissolve',
+              'parliament', 'and', 'call', 'the', 'snap', 'election', '.']
 
+    list_b = ['-LRB-', 'ABC', '-RRB-', ',', 'Tom', 'Thabane', 'resigned', 'in', 'October', 'last', 'year', 'to', 'form',
+              'the', 'All', 'Basotho',
+              'Convention', 'crossing', 'the', 'floor', 'with', '17', 'members', 'of',
+              'parliament', ',', 'causing', 'constitutional', 'monarch', 'King', 'Letsie', 'III', 'to', 'dissolve',
+              'parliament', 'and', 'call', 'the', 'snap', 'election', '.']
+
+    original_entity_lookup = {}
+    original_entity_lookup['14'] = 'ent1_start'
+    original_entity_lookup['16'] = 'ent1_end'
+    original_entity_lookup['4'] = 'ent2_start'
+    original_entity_lookup['5'] = 'ent2_end'
+
+    look = SyncIndices.b_reverselookup_to_a_lookup(list_a, list_b, original_entity_lookup)
 
     prepare_for_path_analysis(output_file=args.output, input_file=args.input, batch_size=args.batch_size)
 
