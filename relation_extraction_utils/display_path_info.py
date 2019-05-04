@@ -2,7 +2,7 @@ import argparse
 
 import matplotlib.pyplot as plot
 
-from relation_extraction_utils.internal.path_stats import PathStats, PathDesignation
+from internal.path_stats import PathStats, PathDesignation
 
 
 def display_path_histograms(csv_file):
@@ -43,5 +43,5 @@ if __name__ == "__main__":
                             help="the path of the csv input file")
 
     args = arg_parser.parse_args()
-    list_sentences_by_path(args.csv_file_path)
-    # display_path_histograms(args.csv_file_path)
+    # list_sentences_by_path(args.csv_file_path)
+    display_path_histograms(args.csv_file_path)
