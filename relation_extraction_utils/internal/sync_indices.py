@@ -15,12 +15,15 @@ class SyncIndices(object):
         index_a = 0
         index_b = 0
 
-        while len(list_b_lookup) > 0 and index_a < len(list_a) and index_b < len(list_b):
+        matched_total = len(list_b_lookup)
+        matched_so_far = 0
+
+        while matched_so_far < matched_total and index_a < len(list_a) and index_b < len(list_b):
 
             if list_a[index_a] == list_b[index_b]:
                 if index_b in list_b_lookup.keys():
                     list_a_lookup[list_b_lookup[index_b]] = index_a
-                    del list_b_lookup[index_b]
+                    matched_so_far += 1
 
                 index_a += 1
                 index_b += 1
