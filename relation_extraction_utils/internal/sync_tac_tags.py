@@ -1,4 +1,4 @@
-class SyncIndices(object):
+class SyncTacTags(object):
     """
 
     Attributes

@@ -14,7 +14,7 @@ import stanfordnlp
 
 from relation_extraction_utils.internal.detokenizer import Detokenizer
 from relation_extraction_utils.internal.map_csv_column import MapCsvColumns
-from relation_extraction_utils.internal.sync_indices import SyncIndices
+from relation_extraction_utils.internal.sync_tac_tags import SyncTacTags
 
 
 def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
@@ -104,7 +104,7 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
         tac_tokens_lookup['obj_start'] = int(map_columns.get_field_value(entry, 'obj_start'))
         tac_tokens_lookup['obj_end'] = int(map_columns.get_field_value(entry, 'obj_end'))
 
-        token_lookup = SyncIndices.b_lookup_to_a_lookup(tokens, tac_tokens, tac_tokens_lookup)
+        token_lookup = SyncTacTags.b_lookup_to_a_lookup(tokens, tac_tokens, tac_tokens_lookup)
 
         if len(token_lookup) != len(tac_tokens_lookup):
             print('Big problems:')
@@ -168,7 +168,7 @@ if __name__ == "__main__":
     original_entity_lookup['obj_start'] = 4
     original_entity_lookup['obj_end'] = 4
 
-    look = SyncIndices.b_lookup_to_a_lookup(list_a, list_b, original_entity_lookup)
+    look = SyncTacTags.b_lookup_to_a_lookup(list_a, list_b, original_entity_lookup)
 
     if len(look) != len(original_entity_lookup):
         print('got problem')
