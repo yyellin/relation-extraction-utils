@@ -35,19 +35,10 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
     detokenizer = Detokenizer()
     nlp = stanfordnlp.Pipeline()
 
-    count = 0
     batch = 0
     output = None
 
-    for entry in csv_reader:
-
-        tac_tokens = eval(map_columns.get_field_value(entry, 'original_tokens'))
-        sentence = detokenizer.detokenize(tac_tokens)
-
-        parsed_sentence = nlp(sentence)
-        # let's ignore sentences who parse into multiple sentences - so as to avoid confusion
-        if len(parsed_sentence.sentences) > 1:
-            continue
+    for count, entry in enumerate(csv_reader, start=0):
 
         # the next few lines of code deal with opening and closing files (depending on the batching argument, etc)
         new_file = False
@@ -73,7 +64,7 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
         # if we did create a new file, let's ensure that the first row consists of column titles
         if new_file:
             fieldnames = ['id', 'sentence', 'ent1', 'ent2', 'ent1_start', 'ent1_end', 'ent2_start', 'ent2_end',
-                          'ud_parse', 'words', 'lemmas']
+                          'ud_parse', 'words', 'lemmas', 'comment']
 
             csv_out = csv.writer(output)
             csv_out.writerow(fieldnames)
@@ -81,7 +72,19 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
         # now that we've finished creating a new file as necessary, we can proceed with the business
         # at hand:
 
-        count += 1
+        tac_tokens = eval(map_columns.get_field_value(entry, 'original_tokens'))
+        sentence = detokenizer.detokenize(tac_tokens)
+
+        parsed_sentence = nlp(sentence)
+        # let's ignore sentences who parse into multiple sentences - so as to avoid confusion
+        if len(parsed_sentence.sentences) > 1:
+            csv_out.writerow(
+                [count, sentence, None, None, None, None, None, None, None,
+                 None, None, 'python stanfordnlp parse produced more than one sentence'])
+
+            continue
+
+
 
         ud_parse = []
         for governor, dep, word in parsed_sentence.sentences[0].dependencies:
@@ -107,14 +110,18 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
         token_lookup = SyncTacTags.b_lookup_to_a_lookup(tokens, tac_tokens, tac_tokens_lookup)
 
         if len(token_lookup) != len(tac_tokens_lookup):
-            print('Big problems:')
-            print('tac tokens: {0}'.format(tac_tokens))
-            print('good tokens: {0}'.format(tokens))
-            print('token_lookup {0}'.format(token_lookup))
-            print('tac_tokens_reverse_lookup {0}'.format(tac_tokens_lookup))
+            # print('Big problems:')
+            # print('tac tokens: {0}'.format(tac_tokens))
+            # print('good tokens: {0}'.format(tokens))
+            # print('token_lookup {0}'.format(token_lookup))
+            # print('tac_tokens_reverse_lookup {0}'.format(tac_tokens_lookup))
+            #
+            # print('skipping ...')
+            # print()
 
-            print('skipping ...')
-            print()
+            csv_out.writerow(
+                [count, sentence, None, None, None, None, None, None, None,
+                 None, None, 'was not able to reconcile TAC and python stanfordnlp parse indexing'])
             continue
 
         ent1_start = token_lookup['subj_start']
@@ -127,8 +134,7 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
 
         csv_out.writerow(
             [count, sentence, ent2, ent1, ent1_start + 1, ent1_end + 1, ent2_start + 1, ent2_end + 1, ud_parse,
-             tokens_with_indices,
-             lemmas_with_indices])
+             tokens_with_indices, lemmas_with_indices, None])
 
 
 if __name__ == "__main__":
