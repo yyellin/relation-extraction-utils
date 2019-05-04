@@ -98,18 +98,18 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
 
         ud_parse.sort(key=lambda x: int(x[0]))
 
-        tac_tokens_reverse_lookup = {}
-        tac_tokens_reverse_lookup[map_columns.get_field_value(entry, 'subj_start')] = 'subj_start'
-        tac_tokens_reverse_lookup[map_columns.get_field_value(entry, 'subj_end')] = 'subj_end'
-        tac_tokens_reverse_lookup[map_columns.get_field_value(entry, 'obj_start')] = 'obj_start'
-        tac_tokens_reverse_lookup[map_columns.get_field_value(entry, 'obj_end')] = 'obj_end'
+        tac_tokens_lookup = {}
+        tac_tokens_lookup['subj_start'] = map_columns.get_field_value(entry, 'subj_start')
+        tac_tokens_lookup['subj_end'] = map_columns.get_field_value(entry, 'subj_end')
+        tac_tokens_lookup['obj_start'] = map_columns.get_field_value(entry, 'obj_start')
+        tac_tokens_lookup['obj_end'] = map_columns.get_field_value(entry, 'obj_end')
 
-        token_lookup = SyncIndices.b_reverselookup_to_a_lookup(tac_tokens, tokens, tac_tokens_reverse_lookup)
+        token_lookup = SyncIndices.b_lookup_to_a_lookup(tac_tokens, tokens, tac_tokens_lookup)
 
-        if len(token_lookup) != len(tac_tokens_reverse_lookup):
+        if len(token_lookup) != len(tac_tokens_lookup):
             print('Big problems for sentence: {0}'.format(sentence))
             print('token_lookup {0}'.format(token_lookup))
-            print('tac_tokens_reverse_lookup {0}'.format(tac_tokens_reverse_lookup))
+            print('tac_tokens_reverse_lookup {0}'.format(tac_tokens_lookup))
 
             print('skipping ...')
             continue
@@ -117,8 +117,8 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
         print('tac tokens: {0}'.format(tac_tokens))
         print('good tokens: {0}'.format(tokens))
         print('token_lookup {0}'.format(token_lookup))
-        print('tac_tokens_reverse_lookup {0}'.format(tac_tokens_reverse_lookup))
-
+        print('tac_tokens_reverse_lookup {0}'.format(tac_tokens_lookup))
+        print()
 
         ent1_start = token_lookup['subj_start']
         ent1_end = token_lookup['subj_end']
@@ -180,7 +180,7 @@ if __name__ == "__main__":
     original_entity_lookup['4'] = 'ent2_start'
     original_entity_lookup['5'] = 'ent2_end'
 
-    look = SyncIndices.b_reverselookup_to_a_lookup(list_a, list_b, original_entity_lookup)
+    look = SyncIndices.b_lookup_to_a_lookup(list_a, list_b, original_entity_lookup)
 
     prepare_for_path_analysis(output_file=args.output, input_file=args.input, batch_size=args.batch_size)
 

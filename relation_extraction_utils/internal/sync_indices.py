@@ -9,7 +9,7 @@ class SyncIndices(object):
     """
 
     @staticmethod
-    def b_reverselookup_to_a_lookup(list_a, list_b, list_b_lookup):
+    def b_lookup_to_a_lookup(list_a, list_b, list_b_lookup):
         list_a_lookup = {}
 
         index_a = 0
@@ -21,9 +21,11 @@ class SyncIndices(object):
         while matched_so_far < matched_total and index_a < len(list_a) and index_b < len(list_b):
 
             if list_a[index_a] == list_b[index_b]:
-                if str(index_b) in list_b_lookup.keys():
-                    list_a_lookup[list_b_lookup[str(index_b)]] = index_a
-                    matched_so_far += 1
+
+                for k, v in list_b_lookup.iteritems():
+                    if v == index_b:
+                        list_a_lookup[k] = index_a
+                        matched_so_far += 1
 
                 index_a += 1
                 index_b += 1
