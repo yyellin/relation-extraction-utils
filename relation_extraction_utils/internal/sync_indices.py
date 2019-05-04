@@ -10,6 +10,11 @@ class SyncIndices(object):
 
     @staticmethod
     def b_lookup_to_a_lookup(list_a, list_b, list_b_lookup):
+
+        print(list_a)
+        print(list_b)
+        print(list_b_lookup)
+
         list_a_lookup = {}
 
         index_a = 0
