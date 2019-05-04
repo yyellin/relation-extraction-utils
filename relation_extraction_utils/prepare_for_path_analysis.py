@@ -29,9 +29,9 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
     """
     output_file = output_file[:-len('.csv')] if output_file.endswith('.csv') else output_file
     input = open(input_file) if input_file is not None else sys.stdin
-    cvs_reader = csv.reader(input)
+    csv_reader = csv.reader(input)
 
-    map_columns = MapCsvColumns(next(cvs_reader))
+    map_columns = MapCsvColumns(next(csv_reader))
     detokenizer = Detokenizer()
     nlp = stanfordnlp.Pipeline()
 
@@ -39,7 +39,7 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
     batch = 0
     output = None
 
-    for entry in cvs_reader:
+    for entry in csv_reader:
 
         original_tokens = eval(map_columns.get_field_value(entry, 'original_tokens'))
         sentence = detokenizer.detokenize(original_tokens)
