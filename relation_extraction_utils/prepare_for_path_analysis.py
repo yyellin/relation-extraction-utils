@@ -116,11 +116,11 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
 
         ent1_start = token_lookup['subj_start']
         ent1_end = token_lookup['subj_end']
-        ent1 = ' '.join(tokens_with_indices[ent1_start:ent1_end + 1])
+        ent1 = ' '.join(tokens[ent1_start:ent1_end + 1])
 
         ent2_start = token_lookup['obj_start']
         ent2_end = token_lookup['obj_end']
-        ent2 = ' '.join(tokens_with_indices[ent2_start:ent2_end + 1])
+        ent2 = ' '.join(tokens[ent2_start:ent2_end + 1])
 
         csv_out.writerow(
             [count, sentence, ent2, ent1, ent1_start + 1, ent1_end + 1, ent2_start + 1, ent2_end + 1, ud_parse,
