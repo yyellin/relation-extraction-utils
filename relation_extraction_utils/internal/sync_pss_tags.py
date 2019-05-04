@@ -1,4 +1,4 @@
-from link import Link
+from relation_extraction_utils.internal.link import Link
 
 
 class SyncPssTags(object):

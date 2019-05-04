@@ -42,10 +42,7 @@ def convert_tac_to_csv(input, output, relation):
         csv_out.writerow([tokens, subj_start, subj_end, obj_start, obj_end])
 
 
-print('hello out')
-
 if __name__ == "__main__":
-    print('hello in')
 
     arg_parser = argparse.ArgumentParser(description='convert json TAC file to a comma-separated value '
                                                      'file with the following columns: '

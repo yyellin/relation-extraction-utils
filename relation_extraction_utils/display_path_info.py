@@ -2,7 +2,7 @@ import argparse
 
 import matplotlib.pyplot as plot
 
-from internal.path_stats import PathStats, PathDesignation
+from relation_extraction_utils.internal.path_stats import PathStats, PathDesignation
 
 
 def display_path_histograms(csv_file):

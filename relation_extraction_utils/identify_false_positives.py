@@ -3,9 +3,9 @@ import csv
 
 import pandas as pd
 
-from internal.dep_graph import DepGraph
-from internal.link import Link
-from internal.path_stats import PathStats
+from relation_extraction_utils.internal.dep_graph import DepGraph
+from relation_extraction_utils.internal.link import Link
+from relation_extraction_utils.internal.path_stats import PathStats
 
 FOUNDED_BY_TRIGGERS = {
     'create',

@@ -12,9 +12,9 @@ import sys
 
 import stanfordnlp
 
-from internal.detokenizer import Detokenizer
-from internal.map_csv_column import MapCsvColumns
-from internal.sync_indices import SyncIndices
+from relation_extraction_utils.internal.detokenizer import Detokenizer
+from relation_extraction_utils.internal.map_csv_column import MapCsvColumns
+from relation_extraction_utils.internal.sync_indices import SyncIndices
 
 
 def prepare_for_path_analysis(input_file=None, output_file=None, batch_size=None):
