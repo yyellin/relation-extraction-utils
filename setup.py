@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='relation_extraction_utils',
-    version='0.0.2',
+    version='0.0.3',
     packages=['relation_extraction_utils', 'relation_extraction_utils.internal'],
     url='https://github.com/comp-aspects-of-appl-linguistics/relation_extraction_utils',
     license='GPLv3',
@@ -12,5 +12,5 @@ setup(
     install_requires=[
         'stanfordnlp', 'nltk', 'pandas', 'networkx', 'spacy'
     ],
-    scripts=['bin/parse_ud']
+    scripts=['bin/parse_ud', 'bin/parse_ner', 'bin/tac_to_csv', 'bin/identify_relations']
 )
