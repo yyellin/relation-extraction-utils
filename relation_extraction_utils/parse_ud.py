@@ -13,11 +13,11 @@ import sys
 import stanfordnlp
 
 from relation_extraction_utils.internal.detokenizer import Detokenizer
-from relation_extraction_utils.internal.map_csv_column import MapCsvColumns
+from relation_extraction_utils.internal.map_csv_column import CsvColumnMapper
 from relation_extraction_utils.internal.sync_tac_tags import SyncTacTags
 
 
-def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
+def parse_ud(output_file, input_file=None, batch_size=None):
     """
 
      Parameters
@@ -31,9 +31,13 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
     input = open(input_file) if input_file is not None else sys.stdin
     csv_reader = csv.reader(input)
 
-    map_columns = MapCsvColumns(next(csv_reader))
+    map_columns = CsvColumnMapper(next(csv_reader),
+                                  source_required=['original_tokens', 'subj_start', 'subj_end', 'obj_start', 'obj_end'])
     detokenizer = Detokenizer()
+
+    print('BEGIN-INIT-NLP')
     nlp = stanfordnlp.Pipeline()
+    print('END-INIT-NLP')
 
     batch = 0
     output = None
@@ -66,24 +70,23 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
             fieldnames = ['id', 'sentence', 'ent1', 'ent2', 'ent1_start', 'ent1_end', 'ent2_start', 'ent2_end',
                           'ud_parse', 'words', 'lemmas', 'comment']
 
-            csv_out = csv.writer(output)
-            csv_out.writerow(fieldnames)
+            csv_writer = csv.writer(output, delimiter='\t')
+            csv_writer.writerow(fieldnames)
 
         # now that we've finished creating a new file as necessary, we can proceed with the business
         # at hand:
 
-        tac_tokens = eval(map_columns.get_field_value(entry, 'original_tokens'))
+        tac_tokens = eval(map_columns.get_field_value_from_source(entry, 'original_tokens'))
         sentence = detokenizer.detokenize(tac_tokens)
 
         parsed_sentence = nlp(sentence)
         # let's ignore sentences who parse into multiple sentences - so as to avoid confusion
         if len(parsed_sentence.sentences) > 1:
-            csv_out.writerow(
+            csv_writer.writerow(
                 [count, sentence, None, None, None, None, None, None, None,
                  None, None, 'python stanfordnlp parse produced more than one sentence'])
 
             continue
-
 
 
         ud_parse = []
@@ -102,24 +105,15 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
         ud_parse.sort(key=lambda x: int(x[0]))
 
         tac_tokens_lookup = {}
-        tac_tokens_lookup['subj_start'] = int(map_columns.get_field_value(entry, 'subj_start'))
-        tac_tokens_lookup['subj_end'] = int(map_columns.get_field_value(entry, 'subj_end'))
-        tac_tokens_lookup['obj_start'] = int(map_columns.get_field_value(entry, 'obj_start'))
-        tac_tokens_lookup['obj_end'] = int(map_columns.get_field_value(entry, 'obj_end'))
+        tac_tokens_lookup['subj_start'] = int(map_columns.get_field_value_from_source(entry, 'subj_start'))
+        tac_tokens_lookup['subj_end'] = int(map_columns.get_field_value_from_source(entry, 'subj_end'))
+        tac_tokens_lookup['obj_start'] = int(map_columns.get_field_value_from_source(entry, 'obj_start'))
+        tac_tokens_lookup['obj_end'] = int(map_columns.get_field_value_from_source(entry, 'obj_end'))
 
         token_lookup = SyncTacTags.b_lookup_to_a_lookup(tokens, tac_tokens, tac_tokens_lookup)
 
         if len(token_lookup) != len(tac_tokens_lookup):
-            # print('Big problems:')
-            # print('tac tokens: {0}'.format(tac_tokens))
-            # print('good tokens: {0}'.format(tokens))
-            # print('token_lookup {0}'.format(token_lookup))
-            # print('tac_tokens_reverse_lookup {0}'.format(tac_tokens_lookup))
-            #
-            # print('skipping ...')
-            # print()
-
-            csv_out.writerow(
+            csv_writer.writerow(
                 [count, sentence, None, None, None, None, None, None, None,
                  None, None, 'was not able to reconcile TAC and python stanfordnlp parse indexing'])
             continue
@@ -132,16 +126,18 @@ def prepare_for_path_analysis(output_file, input_file=None, batch_size=None):
         ent2_end = token_lookup['obj_end']
         ent2 = ' '.join(tokens[ent2_start:ent2_end + 1])
 
-        csv_out.writerow(
-            [count, sentence, ent2, ent1, ent1_start + 1, ent1_end + 1, ent2_start + 1, ent2_end + 1, ud_parse,
+        csv_writer.writerow(
+            [count, sentence, ent1, ent2, ent1_start + 1, ent1_end + 1, ent2_start + 1, ent2_end + 1, ud_parse,
              tokens_with_indices, lemmas_with_indices, None])
 
 
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(
-        description='prepare each entry in the comma-seperated value input for path analysis. '
-                    'each entry will be supplemented with additional columns '
-                    'ent1, ent2, ud_parse, tokens, lemmas.')
+        description='prepare each sentence represented by an entry in the comma-seperated value input '
+                    'for path analysis. '
+                    'Each entry will be supplemented with additional columns '
+                    'ent1, ent2, ud_parse, tokens, lemmas. '
+                    '(Tokenization is according to stanfordnlp and not the input tokens)')
 
     arg_parser.add_argument(
         'output',
@@ -165,22 +161,4 @@ if __name__ == "__main__":
 
     args = arg_parser.parse_args()
 
-    list_a = ['ABC', 'DEF', 'GHI', 'blah', 'blaah', '123', '456', '789']
-    list_b = ['ABCDEF', 'GHI', 'blah', 'blaah', '123456789']
-
-    original_entity_lookup = {}
-    original_entity_lookup['subj_start'] = 0
-    original_entity_lookup['subj_end'] = 1
-    original_entity_lookup['obj_start'] = 4
-    original_entity_lookup['obj_end'] = 4
-
-    look = SyncTacTags.b_lookup_to_a_lookup(list_a, list_b, original_entity_lookup)
-
-    if len(look) != len(original_entity_lookup):
-        print('got problem')
-    else:
-        print('ggod')
-
-    prepare_for_path_analysis(output_file=args.output, input_file=args.input, batch_size=args.batch_size)
-
-#    convert_tac_to_csv(input, output, args.relation)
+    parse_ud(output_file=args.output, input_file=args.input, batch_size=args.batch_size)

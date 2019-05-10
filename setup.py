@@ -10,6 +10,7 @@ setup(
     author_email='',
     description='Various utilities for processing and analyzing relation extraction related data',
     install_requires=[
-        'stanfordnlp', 'nltk', 'pandas', 'networkx'
+        'stanfordnlp', 'nltk', 'pandas', 'networkx', 'spacy'
     ],
+    scripts=['bin/parse_ud']
 )

@@ -79,8 +79,11 @@ class PathStats(object):
             dependency_parse = eval(row.dependency_parse)
 
             links = Link.get_links(dependency_parse)
-            pss_tags = SyncPssTags.get_pss_tags_by_index(row)
+            index_lookup = {link.word_index: link.word for link in Link.get_links(eval(row.dependency_parse))}
 
+            pss_index_lookup = {tuple[0]: tuple[1] for tuple in eval(row.pss_index_lookup)}
+            pss_positive_lookup = eval(row.pss_parse)
+            pss_tags = SyncPssTags.get_pss_tags_by_index(index_lookup, pss_index_lookup, pss_positive_lookup)
 
             ent1_indexes = [index for index in range(int(row.ent1_start), int(row.ent1_end) + 1)]
             ent1_head = Link.get_head(links, ent1_indexes)

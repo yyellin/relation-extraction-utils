@@ -1,6 +1,3 @@
-from relation_extraction_utils.internal.link import Link
-
-
 class SyncPssTags(object):
     """
     'SyncPssTags' is designed to
@@ -14,13 +11,9 @@ class SyncPssTags(object):
     """
 
     @staticmethod
-    def get_pss_tags_by_index(row):
+    def get_pss_tags_by_index(index_lookup, pss_index_lookup, pss_positive_lookup):
 
         index_to_pss = {}
-
-        index_lookup = {link.word_index: link.word for link in Link.get_links(eval(row.dependency_parse))}
-        pss_index_lookup = {tuple[0]: tuple[1] for tuple in eval(row.pss_index_lookup)}
-        pss_positive_lookup = eval(row.pss_parse)
 
         index = 1
         pss_index = 1
