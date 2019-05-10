@@ -1,4 +1,4 @@
 #!/bin/bash
 
-python -m relation_extraction_utils.prepare_for_path_analysis "$@" | sed '/BEGIN-INIT-NLP/,/END-INIT-NLP/ d'
+python -m relation_extraction_utils.parse_ud "$@" | sed '/BEGIN-INIT-NLP/,/END-INIT-NLP/ d'
 
