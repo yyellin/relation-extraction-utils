@@ -31,7 +31,7 @@ def parse_ud(output_file, input_file=None, batch_size=None):
     input = open(input_file) if input_file is not None else sys.stdin
     csv_reader = csv.reader(input)
 
-    map_columns = CsvColumnMapper(next(csv_reader),
+    map_columns = CsvColumnMapper(next(csv_reader), ['ner'],
                                   source_required=['original_tokens', 'subj_start', 'subj_end', 'obj_start', 'obj_end'])
     detokenizer = Detokenizer()
 
@@ -133,6 +133,7 @@ def parse_ud(output_file, input_file=None, batch_size=None):
 
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(
+        prog='parse_ud',
         description='prepare each sentence represented by an entry in the comma-seperated value input '
                     'for path analysis. '
                     'Each entry will be supplemented with additional columns '

@@ -108,7 +108,9 @@ def identify_relations(input_file, output_file, trigger_file, path_file, entity_
 
 
 if __name__ == "__main__":
-    arg_parser = argparse.ArgumentParser(description="identify relationships that match given paths and trigger words")
+    arg_parser = argparse.ArgumentParser(
+        prog='identify_relations',
+        description="identify relationships that match given paths and trigger words")
 
     arg_parser.add_argument(
         'output',

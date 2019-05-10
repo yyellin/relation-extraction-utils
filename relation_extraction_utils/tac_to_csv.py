@@ -43,10 +43,11 @@ def convert_tac_to_csv(input, output, relation):
 
 
 if __name__ == "__main__":
-
-    arg_parser = argparse.ArgumentParser(description='convert json TAC file to a comma-separated value '
-                                                     'file with the following columns: '
-                                                     'original_tokens, ent1_start, ent1_end, ent2_start, ent2_end')
+    arg_parser = argparse.ArgumentParser(
+        prog='tac_to_csv',
+        description='convert json TAC file to a comma-separated value '
+                    'file with the following columns: '
+                    'original_tokens, ent1_start, ent1_end, ent2_start, ent2_end')
 
     arg_parser.add_argument(
         '--relation',
