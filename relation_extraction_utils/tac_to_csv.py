@@ -26,7 +26,7 @@ def convert_tac_to_csv(input, output, relation):
     json_input = json.load(input)
     csv_out = csv.writer(output)
 
-    fieldnames = ['original_tokens', 'subj_start', 'subj_end', 'obj_start', 'obj_end']
+    fieldnames = ['tac_tokens', 'subj_start', 'subj_end', 'obj_start', 'obj_end']
     csv_out.writerow(fieldnames)
 
     for entry in json_input:
@@ -47,7 +47,7 @@ if __name__ == "__main__":
         prog='tac_to_csv',
         description='convert json TAC file to a comma-separated value '
                     'file with the following columns: '
-                    'original_tokens, ent1_start, ent1_end, ent2_start, ent2_end')
+                    'tac_tokens, ent1_start, ent1_end, ent2_start, ent2_end')
 
     arg_parser.add_argument(
         '--relation',

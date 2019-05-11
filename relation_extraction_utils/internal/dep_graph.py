@@ -86,14 +86,14 @@ class DepGraph(object):
 
             if DepGraph.Edge(me, next) in self.__edge_to_deptype:
                 edge = DepGraph.Edge(me, next)
-                direction = '↓'
+                direction = '!'  # ''↓'
             else:
                 # If the edge represented by (this, next) does not exist in the
                 # '__edge_to_deptype' map, it means that the actual edge in the
                 # dependency parse is from next to this, where this is the parent.
                 # Thus we switch the order ...
                 edge = DepGraph.Edge(next, me)
-                direction = '↑'
+                direction = '^'  #'↑'
 
             dependency = self.__edge_to_deptype[edge]
 
