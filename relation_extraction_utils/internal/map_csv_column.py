@@ -37,7 +37,7 @@ class CsvColumnMapper(object):
             if source_field in target_column_lookup.keys():
                 self.__mapping_instructions.append(('T', target_column_lookup[source_field], source_field))
                 del target_column_lookup[source_field]
-            elif filter_source_from_result is not None or source_field not in filter_source_from_result:
+            elif filter_source_from_result is None or source_field not in filter_source_from_result:
                 self.__mapping_instructions.append(('S', source_index, source_field))
 
         for target_field, target_index in target_column_lookup.items():
