@@ -17,7 +17,7 @@ from relation_extraction_utils.internal.map_csv_column import CsvColumnMapper
 from relation_extraction_utils.internal.sync_tac_tags import SyncTacTags
 
 
-def parse_ud(output_file=None, input_file=None, batch_size=None):
+def parse_ud(input_file=None, output_file=None, batch_size=None):
     """
 
      Parameters
@@ -59,14 +59,17 @@ def parse_ud(output_file=None, input_file=None, batch_size=None):
     )
     detokenizer = Detokenizer()
 
+    ## The prints before and after Pipeline initialization are used by the calling script
+    ## as markets to indicated output that should be filtered out - see bin/parse_ud
+    ## implementation
     print('BEGIN-INIT-NLP')
     nlp = stanfordnlp.Pipeline()
     print('END-INIT-NLP')
 
     batch = 0
     output = None
-    output_file = output_file[:-len('.csv')] if output_file is not None and output_file.endswith(
-        '.csv') else output_file
+    output_file = output_file[:-len('.csv')] if output_file is not None and output_file.endswith('.csv') \
+        else output_file
 
     for count, entry in enumerate(csv_reader, start=0):
 
@@ -220,4 +223,4 @@ if __name__ == "__main__":
 
     args = arg_parser.parse_args()
 
-    parse_ud(output_file=args.output, input_file=args.input, batch_size=args.batch_size)
+    parse_ud(input_file=args.input, output_file=args.output, batch_size=args.batch_size)

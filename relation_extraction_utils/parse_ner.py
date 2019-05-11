@@ -12,7 +12,6 @@ import sys
 
 import en_core_web_sm
 
-from relation_extraction_utils.internal.file_type_util import FileTypeUtil
 from relation_extraction_utils.internal.map_csv_column import CsvColumnMapper
 from relation_extraction_utils.internal.sync_tags import SyncTags
 
@@ -27,16 +26,17 @@ def parse_ner(output_file, input_file=None, batch_size=None):
      -------
 
     """
-    output_file = output_file[:-len('.csv')] if output_file.endswith('.csv') else output_file
-    input = open(input_file,
-                 encoding=FileTypeUtil.determine_encoding(input_file)) if input_file is not None else sys.stdin
-    csv_reader = csv.reader(input, delimiter='\t')
+    input = open(input_file) if input_file is not None else sys.stdin
+    csv_reader = csv.reader(input)
 
     column_mapper = CsvColumnMapper(next(csv_reader), ['ner'],
                                     source_required=['sentence', 'ud_parse', 'words'])
 
     batch = 0
     output = None
+    output_file = output_file[:-len('.csv')] if output_file is not None and output_file.endswith('.csv') \
+        else output_file
+
 
     spacy_pipeline = en_core_web_sm.load()
 
@@ -45,11 +45,16 @@ def parse_ner(output_file, input_file=None, batch_size=None):
         # the next few lines of code deal with opening and closing files (depending on the batching argument, etc)
         new_file = False
 
-        # first option: we've just started but no batching
-        if count == 0 and batch_size is None:
+        # first option: standard output ...
+        if count == 0 and output_file is None:
+            output = sys.stdout
+            new_file = True
+
+        # second option: we've just started, we're writing to a real file, but no batching
+        if count == 0 and output_file is not None and batch_size is None:
             output_file_actual = '{0}.csv'.format(output_file)
 
-            output = open(output_file_actual, 'w', encoding='utf_16', newline='')
+            output = open(output_file_actual, 'w')
             new_file = True
 
         # second case: we've finished a batch (and we are batching..)
@@ -59,16 +64,14 @@ def parse_ner(output_file, input_file=None, batch_size=None):
             if output is not None:
                 output.close()
 
-            output = open(output_file_actual, 'w', encoding='utf_16', newline='')
+            output = open(output_file_actual, 'w')
             batch += 1
             new_file = True
 
         # if we did create a new file, let's ensure that the first row consists of column titles
         if new_file:
-            fieldnames = column_mapper.get_new_headers()
-
-            csv_writer = csv.writer(output, delimiter='\t')
-            csv_writer.writerow(fieldnames)
+            csv_writer = csv.writer(output)
+            csv_writer.writerow(column_mapper.get_new_headers())
 
         # now that we've finished creating a new file as necessary, we can proceed with the business
         # at hand:
@@ -100,16 +103,16 @@ if __name__ == "__main__":
                     '...')
 
     arg_parser.add_argument(
-        'output',
-        action='store',
-        metavar='output-file',
-        help='the comma-seperated field output file')
-
-    arg_parser.add_argument(
         '--input',
         action='store',
         metavar='input-file',
         help='when provided input will be read from this file rather than from standard input')
+
+    arg_parser.add_argument(
+        '--output',
+        action='store',
+        metavar='output-file',
+        help='the comma-seperated field output file')
 
     arg_parser.add_argument(
         '--batch-size',
@@ -121,4 +124,4 @@ if __name__ == "__main__":
 
     args = arg_parser.parse_args()
 
-    parse_ner(output_file=args.output, input_file=args.input, batch_size=args.batch_size)
+    parse_ner(input_file=args.input, output_file=args.output, batch_size=args.batch_size)
