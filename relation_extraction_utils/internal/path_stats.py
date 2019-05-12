@@ -117,3 +117,111 @@ class PathStats(object):
         histogram = self.__histograms[path_designation]
         return sorted([Stat(frequency=frequency, path=path) for (path, frequency) in histogram.items()],
                       reverse=reverse)
+
+
+
+class PathStatsWithPss(object):
+
+
+    """
+
+    Attributes
+    ----------
+    __histograms : dictionary of histogram maps
+        each histogram map is itself a dictionary mapping a path to the number of its cocurences in the cvs file
+
+    Methods
+    -------
+    get_sorted_stats
+        Returns a list of 'Stat' objects sorted by frequency
+
+    """
+
+    def __init__(self, input_file):
+        """
+         Parameters
+         ----------
+         input_file : str
+             must contain the path of the comma delimited file - no validation is performed by the code -
+             the path must be of a valid file
+        """
+        from models.supersenses.lstm_mlp_supersenses_model import LstmMlpSupersensesModel
+        from models.supersenses.preprocessing import preprocess_sentence
+        from models.supersenses.preprocessing.corenlp import CoreNLPServer
+
+
+        self.__corenlp = CoreNLPServer()
+        self.__corenlp.start()
+        self.__model = LstmMlpSupersensesModel.load(r'/pss-code/nlp/pssmodel')
+
+        self.__histograms = {}
+
+        for path_designation in PathDesignation:
+            self.__histograms[path_designation] = defaultdict(int)
+
+        train_data = pandas.read_csv(input_file, header=0)
+        train_data.dropna(subset=['trigger_idx', 'ent1_start', 'ent1_end', 'ent1_end', 'ent2_start'], inplace=True)
+
+        for row in train_data.itertuples():
+
+            pps_preprocessed = preprocess_sentence(row.sentence)
+            print(pps_preprocessed)
+
+            dependency_parse = eval(row.dependency_parse)
+
+            links = Link.get_links(dependency_parse)
+
+            ent1_indexes = [index for index in range(int(row.ent1_start), int(row.ent1_end) + 1)]
+            ent1_head = Link.get_head(links, ent1_indexes)
+
+            ent2_indexes = [index for index in range(int(row.ent2_start), int(row.ent2_end) + 1)]
+            ent2_head = Link.get_head(links, ent2_indexes)
+
+            trigger_index = int(row.trigger_idx)
+            graph = DepGraph(links)
+
+            trigger_to_ent2 = graph.get_steps(trigger_index, ent2_head)
+            trigger_to_ent1 = graph.get_steps(trigger_index, ent1_head)
+            ent1_to_trigger = graph.get_steps(ent1_head, trigger_index)
+            ent1_to_ent2_via_trigger = '{0} >< {1}'.format(ent1_to_trigger, trigger_to_ent2)
+            ent1_to_ent2 = graph.get_steps(ent1_head, ent2_head)
+
+            for path_designation, path in zip(PathDesignation, [trigger_to_ent1,
+                                                                trigger_to_ent2,
+                                                                ent1_to_ent2_via_trigger,
+                                                                ent1_to_ent2]):
+                self.__histograms[path_designation][path] += 1
+
+
+    def  __del__(self):
+        """
+         Called when object is garbage collected - ensures that the Java Stanford NLP server
+         is shutdown
+
+         Parameters
+         ----------
+        """
+
+        self.__corenlp.stop()
+
+
+
+
+    def get_sorted_stats(self, path_designation, reverse=False):
+        """
+         Parameters
+         ----------
+         path_designation : PathDesignation
+             indicates which path type we're interested in
+         reverse : Boolean
+             indicates direction of sort of the paths
+
+         Returns
+         -------
+         a list of 'Stat' objects sorted by frequency
+
+        """
+
+        histogram = self.__histograms[path_designation]
+        return sorted([Stat(frequency=frequency, path=path) for (path, frequency) in histogram.items()],
+                      reverse=reverse)
