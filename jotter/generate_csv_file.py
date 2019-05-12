@@ -93,7 +93,13 @@ def generate_csv_file(train_data_path, relation_name, csv_file_path, batch_size=
 
         index_lookup_str = '\n'.join(['{0}: \'{1}\''.format(tuple[0], tuple[1]) for tuple in texts])
 
-        csv_out.writerow([count, sentence, obj, subj, dependencies, index_lookup_str, lemmas])
+        csv_out.writerow([count, sentence, obj, subj,
+                          dependencies, index_lookup_str, lemmas,
+                          None, None,
+                          subj_start + 1, subj_end + 1,
+                          obj_start + 1, obj_end + 1,
+                          None
+                          ])
 
 
 if __name__ == "__main__":

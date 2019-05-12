@@ -1,0 +1,4 @@
+#!/bin/bash
+
+python -m relation_extraction_utils.tac_to_csv "$@"
+

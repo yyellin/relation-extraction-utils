@@ -1,0 +1,4 @@
+#!/bin/bash
+
+python -m relation_extraction_utils.parse_ud "$@" | sed '/BEGIN-INIT-NLP/,/END-INIT-NLP/ d'
+

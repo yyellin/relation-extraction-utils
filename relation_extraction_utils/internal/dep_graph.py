@@ -3,7 +3,7 @@ from collections import namedtuple
 import networkx
 
 
-class Step(namedtuple('Step', 'direction, dependency')):
+class Step(namedtuple('Step', 'me, next, dep_direction, dependency')):
     """
     'Step' represents a single step in the path between a current node in a dependency tree
     and the next node in the path.
@@ -81,24 +81,25 @@ class DepGraph(object):
 
         for i in range(0, len(node_list) - 1):
 
-            this = node_list[i]
+            me = node_list[i]
             next = node_list[i + 1]
 
-            if DepGraph.Edge(this, next) in self.__edge_to_deptype:
-                edge = DepGraph.Edge(this, next)
-                direction = '↓'
+            if DepGraph.Edge(me, next) in self.__edge_to_deptype:
+                edge = DepGraph.Edge(me, next)
+                direction = '!'  # ''↓'
             else:
                 # If the edge represented by (this, next) does not exist in the
                 # '__edge_to_deptype' map, it means that the actual edge in the
                 # dependency parse is from next to this, where this is the parent.
                 # Thus we switch the order ...
-                edge = DepGraph.Edge(next, this)
-                direction = '↑'
+                edge = DepGraph.Edge(next, me)
+                direction = '^'  #'↑'
 
             dependency = self.__edge_to_deptype[edge]
 
-            step = Step(direction=direction, dependency=dependency)
+            step = Step(me=me, next=next, dep_direction=direction, dependency=dependency)
 
             steps.append(step)
+            # ' '.join(['{0}{1}'.format(step.direction, step.dependency) for step in steps])
 
-        return ' '.join(['{0}{1}'.format(step.direction, step.dependency) for step in steps])
+        return steps
