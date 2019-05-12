@@ -2,18 +2,11 @@ import argparse
 
 import matplotlib.pyplot as plot
 
-from relation_extraction_utils.internal.path_stats import PathStats, PathDesignation
+from relation_extraction_utils.internal.path_stats import PathDesignation, PathStats, PathStatsWithPss
 
 
 def display_path_stats(csv_file):
-    pathstats = PathStats(csv_file)
-
-    full_paths_stats = pathstats.get_sorted_stats(PathDesignation.ENTITY1_TO_ENTITY2_VIA_TRIGGER, reverse=True)
-
-    for frequency, path in full_paths_stats:
-        print('{:4d}: {}'.format(frequency, path))
-
-    exit(0)
+    pathstats = PathStatsWithPss(csv_file)
 
     for path_designation in PathDesignation:
         stats = pathstats.get_sorted_stats(path_designation)
