@@ -113,6 +113,7 @@ def parse_pss(port, model_path, input_file=None, output_file=None, batch_size=No
 
         csv_writer.writerow(column_mapper.get_new_row_values(entry, [pss_lookup]))
 
+    corenlp.stop()
 
 if __name__ == "__main__":
 
