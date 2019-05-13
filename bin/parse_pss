@@ -14,4 +14,4 @@ export CORE_NLP_PORT=$AVAILABLE_PORT
 PSS_MODE_PATH_WITH_EXTENSION=$(find . -name pssmodel.hp)
 export PSS_MODEL_PATH=${PSS_MODE_PATH_WITH_EXTENSION%.*}
 
-python -m relation_extraction_utils.parse_pss "$@"
+python -m relation_extraction_utils.parse_pss "$@" | sed '/BEGIN-INIT-PSS/,/END-INIT-PSS/ d'

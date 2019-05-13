@@ -27,10 +27,6 @@ def parse_pss(port, model_path, input_file=None, output_file=None, batch_size=No
      -------
 
     """
-    from models.supersenses.lstm_mlp_supersenses_model import LstmMlpSupersensesModel
-    from models.supersenses.preprocessing import preprocess_sentence
-    from models.supersenses.preprocessing.corenlp import CoreNLPServer
-
 
     input = open(input_file) if input_file is not None else sys.stdin
     csv_reader = csv.reader(input)
@@ -43,10 +39,20 @@ def parse_pss(port, model_path, input_file=None, output_file=None, batch_size=No
     output_file = output_file[:-len('.csv')] if output_file is not None and output_file.endswith('.csv') \
         else output_file
 
+    print('BEGIN-INIT-PSS')
+
+    from models.supersenses.lstm_mlp_supersenses_model import LstmMlpSupersensesModel
+    from models.supersenses.preprocessing import preprocess_sentence
+    from models.supersenses.preprocessing.corenlp import CoreNLPServer
+
+
     corenlp = CoreNLPServer()
     corenlp.start(port)
 
     model = LstmMlpSupersensesModel.load(model_path)
+
+    print('END-INIT-PSS')
+
 
     for count, entry in enumerate(csv_reader, start=0):
 
@@ -85,6 +91,7 @@ def parse_pss(port, model_path, input_file=None, output_file=None, batch_size=No
         # at hand:
 
         sentence = column_mapper.get_field_value_from_source(entry, 'sentence')
+        print('processing sentence: ', sentence)
 
         proper_tokens = word_tokenize(sentence)
         preprocessed = preprocess_sentence(' '.join(proper_tokens))
