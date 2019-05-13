@@ -94,8 +94,11 @@ def parse_pss(port, model_path, input_file=None, output_file=None, batch_size=No
         print('processing sentence: ', sentence)
 
         proper_tokens = word_tokenize(sentence)
+
+        print('BEGIN-PROCESS-PSS')
         preprocessed = preprocess_sentence(' '.join(proper_tokens))
         pss_pred = model.predict(preprocessed.xs, [x.identified_for_pss for x in preprocessed.xs])
+        print('END-PROCESS-PSS')
 
         pss_lookup_nltk_tokens = {}
         for index in range(len(preprocessed.xs)):
