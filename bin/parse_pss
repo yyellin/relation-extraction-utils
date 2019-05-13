@@ -12,10 +12,6 @@ done
 export CORE_NLP_PORT=$AVAILABLE_PORT
 
 PSS_MODE_PATH_WITH_EXTENSION=$(find . -name pssmodel.hp)
-
 export PSS_MODEL_PATH=${PSS_MODE_PATH_WITH_EXTENSION%.*}
-
-echo $CORE_NLP_PORT
-echo $PSS_MODEL_PATH
 
 python -m relation_extraction_utils.parse_pss "$@"
