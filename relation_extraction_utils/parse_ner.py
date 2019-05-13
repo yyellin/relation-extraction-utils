@@ -16,7 +16,7 @@ from relation_extraction_utils.internal.map_csv_column import CsvColumnMapper
 from relation_extraction_utils.internal.sync_tags import SyncTags
 
 
-def parse_ner(output_file, input_file=None, batch_size=None):
+def parse_ner(input_file=None, output_file=None, batch_size=None):
     """
 
      Parameters
@@ -97,10 +97,10 @@ def parse_ner(output_file, input_file=None, batch_size=None):
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(
         prog='parse_ner',
-        description='for each sentence represented by an entry in the comma-seperated value input '
+        description='for each sentence represented by an entry in the comma-separated value input '
                     'add information pertaining to NER . '
-                    'Each entry will be supplemented with additional columns '
-                    '...')
+                    'Each entry will be supplemented with additional column '
+                    'ner')
 
     arg_parser.add_argument(
         '--input',
@@ -112,7 +112,7 @@ if __name__ == "__main__":
         '--output',
         action='store',
         metavar='output-file',
-        help='the comma-seperated field output file')
+        help='the comma-separated field output file')
 
     arg_parser.add_argument(
         '--batch-size',

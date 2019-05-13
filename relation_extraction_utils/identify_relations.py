@@ -116,19 +116,19 @@ if __name__ == "__main__":
         'output',
         action='store',
         metavar='output-file',
-        help='The comma-seperated field output file')
+        help='The comma-separated field output file')
 
     arg_parser.add_argument(
         'paths',
         action='store',
         metavar='paths-file',
-        help='File containing list of paths (each path on seperate line)')
+        help='File containing list of paths (each path on separate line)')
 
     arg_parser.add_argument(
         'triggers',
         action='store',
         metavar='triggers-file',
-        help='File containing list of trigger words (each trigger word on seperate line)')
+        help='File containing list of trigger words (each trigger word on separate line)')
 
     arg_parser.add_argument(
         '--input',
