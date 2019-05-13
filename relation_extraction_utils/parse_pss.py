@@ -11,9 +11,6 @@ import csv
 import sys
 import os
 
-from models.supersenses.lstm_mlp_supersenses_model import LstmMlpSupersensesModel
-from models.supersenses.preprocessing import preprocess_sentence
-from models.supersenses.preprocessing.corenlp import CoreNLPServer
 from nltk.tokenize import word_tokenize
 
 from relation_extraction_utils.internal.map_csv_column import CsvColumnMapper
@@ -30,6 +27,10 @@ def parse_pss(port, model_path, input_file=None, output_file=None, batch_size=No
      -------
 
     """
+    from models.supersenses.lstm_mlp_supersenses_model import LstmMlpSupersensesModel
+    from models.supersenses.preprocessing import preprocess_sentence
+    from models.supersenses.preprocessing.corenlp import CoreNLPServer
+
 
     input = open(input_file) if input_file is not None else sys.stdin
     csv_reader = csv.reader(input)
