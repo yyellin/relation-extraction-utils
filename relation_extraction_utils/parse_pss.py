@@ -8,8 +8,8 @@ except:
 
 import argparse
 import csv
-import sys
 import os
+import sys
 
 from nltk.tokenize import word_tokenize
 
@@ -143,5 +143,4 @@ if __name__ == "__main__":
     model_path = os.environ.get('PSS_MODEL_PATH')
     assert (model_path is not None)
 
-
-    parse_pss(port, model_path, input_file=args.input, output_file=args.output, batch_size=args.batch_size)
+    parse_pss(int(port), model_path, input_file=args.input, output_file=args.output, batch_size=args.batch_size)
