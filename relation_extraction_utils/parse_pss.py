@@ -91,7 +91,6 @@ def parse_pss(port, model_path, input_file=None, output_file=None, batch_size=No
         # at hand:
 
         sentence = column_mapper.get_field_value_from_source(entry, 'sentence')
-        print('processing sentence: ', sentence)
 
         proper_tokens = word_tokenize(sentence)
 
@@ -122,7 +121,13 @@ if __name__ == "__main__":
         description='for each sentence represented by an entry in the comma-separated value input '
                     'add information pertaining to PSS . '
                     'Each entry will be supplemented with additional column '
-                    'pss')
+                    'pss. '
+                    'Notes: (1) The module requires two environment parameters to be set: '
+                    'CORE_NLP_PORT to indicate which port to run the internal Java server, and '
+                    'PSS_MODEL_PATH that should point to the model path (without the file extension'
+                    '(2) The module requires a crafted PSS environment in order to run - '
+                    'there is a Google colab ipynb file for this')
+
 
     arg_parser.add_argument(
         '--input',
