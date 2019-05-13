@@ -12,5 +12,5 @@ setup(
     install_requires=[
         'stanfordnlp', 'nltk', 'pandas', 'networkx', 'spacy'
     ],
-    scripts=['bin/parse_ud', 'bin/parse_ner', 'bin/tac_to_csv', 'bin/identify_relations']
+    scripts=['bin/tac_to_csv', 'bin/parse_ud', 'bin/parse_ner', 'bin/parse_pss', 'bin/identify_relations']
 )

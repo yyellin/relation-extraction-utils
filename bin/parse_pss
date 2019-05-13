@@ -1,0 +1,7 @@
+#!/bin/bash
+
+
+export CORE_NLP_PORT=9020
+export PSS_MODEL_PATH=".pssmodel"
+
+python -m relation_extraction_utils.parse_pss "$@"
