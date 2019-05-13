@@ -4,16 +4,16 @@
 LOWERPORT=9000
 UPPERPORT=9200
 declare -a IN_USE=($(tail -n +2 /proc/net/tcp | cut -d":" -f"3"|cut -d" " -f"1"))
-
 while :
 do
         AVAILABLE_PORT="`shuf -i $LOWERPORT-$UPPERPORT -n 1`"
         for port in ${IN_USE[@]}; do echo $((0x$port)); done | sort | uniq | grep -q ":AVAILABLE_PORT " || break
 done
-
-
 export CORE_NLP_PORT=$AVAILABLE_PORT
-export PSS_MODEL_PATH=$(find . -name pssmodel.hp)
+
+PSS_MODE_PATH_WITH_EXTENSION=$(find . -name pssmodel.hp)
+
+export PSS_MODEL_PATH=${PSS_MODE_PATH_WITH_EXTENSION%.*}
 
 echo $CORE_NLP_PORT
 echo $PSS_MODEL_PATH
