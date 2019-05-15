@@ -26,7 +26,7 @@ def parse_ner(input_file=None, output_file=None, batch_size=None):
      -------
 
     """
-    input = open(input_file) if input_file is not None else sys.stdin
+    input = open(input_file, encoding='utf-8') if input_file is not None else sys.stdin
     csv_reader = csv.reader(input)
 
     column_mapper = CsvColumnMapper(next(csv_reader), ['ner'],
@@ -54,7 +54,7 @@ def parse_ner(input_file=None, output_file=None, batch_size=None):
         if count == 0 and output_file is not None and batch_size is None:
             output_file_actual = '{0}.csv'.format(output_file)
 
-            output = open(output_file_actual, 'w')
+            output = open(output_file_actual, 'w', encoding='utf-8', newline='')
             new_file = True
 
         # second case: we've finished a batch (and we are batching..)
@@ -64,7 +64,7 @@ def parse_ner(input_file=None, output_file=None, batch_size=None):
             if output is not None:
                 output.close()
 
-            output = open(output_file_actual, 'w')
+            output = open(output_file_actual, 'w', encoding='utf-8', newline='')
             batch += 1
             new_file = True
 
@@ -77,6 +77,8 @@ def parse_ner(input_file=None, output_file=None, batch_size=None):
         # at hand:
 
         sentence = column_mapper.get_field_value_from_source(entry, 'sentence')
+        if 'Christine Egerszegi-Obrist' in sentence:
+            print(sentence)
         spacy_doc = spacy_pipeline(sentence)
         spacy_tokens = [token.text for token in spacy_doc]
 

@@ -2,22 +2,20 @@ import argparse
 import csv
 
 from relation_extraction_utils.internal.dep_graph import DepGraph
-from relation_extraction_utils.internal.file_type_util import FileTypeUtil
 from relation_extraction_utils.internal.link import Link
 from relation_extraction_utils.internal.map_csv_column import CsvColumnMapper
 from relation_extraction_utils.internal.path_stats import PathStats
 
 
 def identify_relations(input_file, output_file, trigger_file, path_file, entity_types=None):
-    input_encoding = FileTypeUtil.determine_encoding(args.input)
-    input = open(input_file, encoding=input_encoding, newline='')
-    csv_reader = csv.reader(input, delimiter=',')
+    input = open(input_file, encoding='utf-8')
+    csv_reader = csv.reader(input)
 
-    output = open(output_file, 'w', encoding='utf_16', newline='')
-    csv_writer = csv.writer(output, delimiter='\t')
+    output = open(output_file, 'w', encoding='utf-8', newline='')
+    csv_writer = csv.writer(output)
 
     triggers = set([line.rstrip('\n') for line in open(trigger_file)])
-    paths = set([line.rstrip('\n') for line in open(path_file, encoding='utf-8')])
+    paths = set([line.rstrip('\n') for line in open(path_file)])
 
     required_columns = ['sentence', 'ud_parse', 'lemmas', 'ent1_start', 'ent1_end', 'ent2_start', 'ent2_end']
 
@@ -113,12 +111,6 @@ if __name__ == "__main__":
         description="identify relationships that match given paths and trigger words")
 
     arg_parser.add_argument(
-        'output',
-        action='store',
-        metavar='output-file',
-        help='The comma-separated field output file')
-
-    arg_parser.add_argument(
         'paths',
         action='store',
         metavar='paths-file',
@@ -131,17 +123,23 @@ if __name__ == "__main__":
         help='File containing list of trigger words (each trigger word on separate line)')
 
     arg_parser.add_argument(
+        '--entity-types',
+        nargs=2,
+        metavar=('entity1-type', 'entity2-type'),
+        help='When used this flag should be followed by two named entity types. When provided, the relation identification '
+             'algorithm will filter out relations that are marked differently (unmarked relations will not be filtered out)')
+
+    arg_parser.add_argument(
         '--input',
         action='store',
         metavar='input-file',
         help='When provided input will be read from this file rather than from standard input')
 
     arg_parser.add_argument(
-        '--entity-types',
-        nargs=2,
-        metavar=('entity1-type', 'entity2-type'),
-        help='When used this flag should be followed by two named entity types. When provided, the relation identification '
-             'algorithm will filter out relations that are marked differently (unmarked relations will not be filtered out)')
+        '--output',
+        action='store',
+        metavar='output-file',
+        help='The comma-separated field output file')
 
 
     args = arg_parser.parse_args()

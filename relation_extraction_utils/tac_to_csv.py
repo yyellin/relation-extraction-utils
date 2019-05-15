@@ -69,7 +69,7 @@ if __name__ == "__main__":
 
     args = arg_parser.parse_args()
 
-    input = open(args.input) if args.input is not None else sys.stdin
-    output = open(args.output) if args.output is not None else sys.stdout
+    input = open(args.input, encoding='utf-8') if args.input is not None else sys.stdin
+    output = open(args.output, 'w', encoding='utf-8', newline='') if args.output is not None else sys.stdout
 
     convert_tac_to_csv(input, output, args.relation)

@@ -27,7 +27,7 @@ def parse_ud(input_file=None, output_file=None, batch_size=None):
      -------
 
     """
-    input = open(input_file) if input_file is not None else sys.stdin
+    input = open(input_file, encoding='utf-8') if input_file is not None else sys.stdin
     csv_reader = csv.reader(input)
 
     column_mapper = CsvColumnMapper(
@@ -85,7 +85,7 @@ def parse_ud(input_file=None, output_file=None, batch_size=None):
         if count == 0 and output_file is not None and batch_size is None:
             output_file_actual = '{0}.csv'.format(output_file)
 
-            output = open(output_file_actual, 'w')
+            output = open(output_file_actual, 'w', encoding='utf-8', newline='')
             new_file = True
 
         # third option: we've finished a batch (and we are batching..)
@@ -95,7 +95,7 @@ def parse_ud(input_file=None, output_file=None, batch_size=None):
             if output is not None:
                 output.close()
 
-            output = open(output_file_actual, 'w')
+            output = open(output_file_actual, 'w', encoding='utf-8', newline='')
             batch += 1
             new_file = True
 
