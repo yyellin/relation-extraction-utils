@@ -14,7 +14,7 @@ import sys
 from nltk.tokenize import word_tokenize
 
 from relation_extraction_utils.internal.map_csv_column import CsvColumnMapper
-from relation_extraction_utils.internal.sync_pss_tags import SyncPssTags
+from relation_extraction_utils.internal.sync_tags import SyncTags
 
 
 def parse_pss(port, model_path, input_file=None, output_file=None, batch_size=None):
@@ -113,7 +113,7 @@ def parse_pss(port, model_path, input_file=None, output_file=None, batch_size=No
         pss_lookup = pss_lookup_nltk_tokens
 
         if ud_tokens != proper_tokens and len(pss_lookup_nltk_tokens) > 0:
-            pss_lookup = SyncPssTags.get_pss_tags_by_index(ud_tokens, proper_tokens, pss_lookup_nltk_tokens)
+            pss_lookup = SyncTags.get_tags_by_index(ud_tokens, proper_tokens, pss_lookup_nltk_tokens)
 
         csv_writer.writerow(column_mapper.get_new_row_values(entry, [pss_lookup]))
 
