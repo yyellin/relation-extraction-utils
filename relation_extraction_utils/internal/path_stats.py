@@ -4,9 +4,9 @@ from enum import Enum
 
 import pandas
 
+from jotter.sync_pss_tags import SyncPssTags
 from relation_extraction_utils.internal.dep_graph import DepGraph
 from relation_extraction_utils.internal.link import Link
-from relation_extraction_utils.internal.sync_pss_tags import SyncPssTags
 
 
 class PathDesignation(Enum):
