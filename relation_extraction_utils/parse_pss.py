@@ -90,6 +90,11 @@ def parse_pss(port, model_path, input_file=None, output_file=None, batch_size=No
         # now that we've finished creating a new file as necessary, we can proceed with the business
         # at hand:
 
+        words = column_mapper.get_field_value_from_source(entry, 'words', True)
+        if words is None:
+            csv_writer.writerow(column_mapper.get_new_row_values(entry, [None]))
+            continue
+
         sentence = column_mapper.get_field_value_from_source(entry, 'sentence')
 
         proper_tokens = word_tokenize(sentence)
@@ -104,7 +109,7 @@ def parse_pss(port, model_path, input_file=None, output_file=None, batch_size=No
             if pss_pred[index].supersense_role:
                 pss_lookup_nltk_tokens[index + 1] = (pss_pred[index].supersense_role, pss_pred[index].supersense_func)
 
-        ud_tokens = [token for _, token in eval(column_mapper.get_field_value_from_source(entry, 'words'))]
+        ud_tokens = [token for _, token in words]
         pss_lookup = pss_lookup_nltk_tokens
 
         if ud_tokens != proper_tokens and len(pss_lookup_nltk_tokens) > 0:

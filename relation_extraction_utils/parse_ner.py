@@ -76,19 +76,22 @@ def parse_ner(input_file=None, output_file=None, batch_size=None):
         # now that we've finished creating a new file as necessary, we can proceed with the business
         # at hand:
 
+        words = column_mapper.get_field_value_from_source(entry, 'words', True)
+        if words is None:
+            csv_writer.writerow(column_mapper.get_new_row_values(entry, [None]))
+            continue
+
         sentence = column_mapper.get_field_value_from_source(entry, 'sentence')
-        if 'Christine Egerszegi-Obrist' in sentence:
-            print(sentence)
         spacy_doc = spacy_pipeline(sentence)
         spacy_tokens = [token.text for token in spacy_doc]
 
         ner_lookup_spacy_tokenization = {}
         for index, token in enumerate(spacy_doc, start=1):
-            if token.ent_type_ in ['PERSON', 'ORG']:
+            if token.ent_type != 0:  # in ['PERSON', 'ORG']:
                 ner_lookup_spacy_tokenization[index] = token.ent_type_
 
-        tokens = [token for _, token in eval(column_mapper.get_field_value_from_source(entry, 'words'))]
         ner_lookup = ner_lookup_spacy_tokenization
+        tokens = [token for _, token in words]
 
         if tokens != spacy_tokens and len(ner_lookup_spacy_tokenization) > 0:
             ner_lookup = SyncTags.b_lookup_to_a_lookup(tokens, spacy_tokens, ner_lookup_spacy_tokenization)
