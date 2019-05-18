@@ -34,13 +34,18 @@ def identify_relations(input, output, triggers, paths, entity_types=None):
         lemma_indices = column_mapper.get_field_value_from_source(entry, 'lemmas', evaluate=True)
         lemmas = [lemma for _, lemma in lemma_indices]
 
-        ent1_start = int(column_mapper.get_field_value_from_source(entry, 'ent1_start'))
-        ent1_end = int(column_mapper.get_field_value_from_source(entry, 'ent1_end'))
+        ent1_start = column_mapper.get_field_value_from_source(entry, 'ent1_start', as_int=True)
+        ent1_end = column_mapper.get_field_value_from_source(entry, 'ent1_end', as_int=True)
+        if ent1_start is None or ent1_end is None:
+            continue
         ent1_indexes = [idx for idx in range(ent1_start, ent1_end + 1)]
         ent1_head = Link.get_head(links, ent1_indexes)
 
-        ent2_start = int(column_mapper.get_field_value_from_source(entry, 'ent2_start'))
-        ent2_end = int(column_mapper.get_field_value_from_source(entry, 'ent2_end'))
+        ent2_start = column_mapper.get_field_value_from_source(entry, 'ent2_start', as_int=True)
+        ent2_end = column_mapper.get_field_value_from_source(entry, 'ent2_end', as_int=True)
+        if ent2_start is None or ent2_end is None:
+            continue
+
         ent2_indexes = [idx for idx in range(ent2_start, ent2_end + 1)]
         ent2_head = Link.get_head(links, ent2_indexes)
 

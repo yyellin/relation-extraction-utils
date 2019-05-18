@@ -43,7 +43,7 @@ class CsvColumnMapper(object):
         for target_field, target_index in target_column_lookup.items():
             self.__mapping_instructions.append(('T', target_index, target_field))
 
-    def get_field_value_from_source(self, source_row, field, evaluate=False):
+    def get_field_value_from_source(self, source_row, field, evaluate=False, as_int=False):
         """
 
         Parameters
@@ -54,6 +54,12 @@ class CsvColumnMapper(object):
         if evaluate:
             if value != '':
                 return eval(value)
+            else:
+                return None
+
+        elif as_int:
+            if value != '':
+                return int(value)
             else:
                 return None
 
