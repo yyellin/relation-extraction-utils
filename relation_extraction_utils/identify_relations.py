@@ -140,7 +140,7 @@ if __name__ == "__main__":
     triggers = set([line.rstrip('\n') for line in open(args.triggers)])
     paths = set([line.rstrip('\n') for line in open(args.paths)])
 
-    identify_relations(input, output, triggers, paths)  # , args.entity_types )
+    identify_relations(input, output, triggers, paths, args.entity_types)
 
 #
 #    input_rows = pd.read_csv(sys.stdin if input_file is None else input_file)
