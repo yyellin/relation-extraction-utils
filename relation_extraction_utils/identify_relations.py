@@ -1,5 +1,6 @@
 import argparse
 import csv
+import sys
 
 from relation_extraction_utils.internal.dep_graph import DepGraph
 from relation_extraction_utils.internal.link import Link
