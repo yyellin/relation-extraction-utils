@@ -63,7 +63,7 @@ class SyncTags(object):
             #       lost)
 
             b_is_substring = False
-            word_a = list_a[index_b - 1]
+            word_a = list_a[index_a - 1]
             while list_b[index_b - 1] in word_a:
                 b_is_substring = True
 
