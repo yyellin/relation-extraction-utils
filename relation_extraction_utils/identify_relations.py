@@ -68,8 +68,6 @@ def identify_relations(input_file, output_file, trigger_file, path_file, entity_
                 print('amazing (2)!!')
                 continue
 
-            wait_here = True
-
         for link in links:
 
             trigger_index = link.word_index
@@ -146,102 +144,6 @@ if __name__ == "__main__":
 
     identify_relations(args.input, args.output, args.triggers, args.paths)  # , args.entity_types )
 
-# FOUNDED_BY_TRIGGERS = {
-#     'create',
-#     'find',
-#     'launch',
-#     'found',
-#     '\'s',
-#     'build',
-#     'her',
-#     'his',
-#     'co-founder',
-#     'start',
-#     'establish',
-#     'set',
-#     'founder',
-#     'set up',
-#     'form'}
-#
-# FOUNDED_BY_FREQUENT_PATHS = {
-#     '↑nmod:poss ↑case >< ↓case',  # 10 appearances
-#     '↓nmod >< ↓appos',  # 7 appearances
-#     '↓obj >< ↑nsubj',  # 6 appearances
-#     '↓obj >< ↓conj ↑nsubj',  # 5 appearances
-#     '↑appos ↑acl >< ↑obl',
-#     '↓compound >< ↓compound',  # 4 appearances
-#     '↓obj >< ↓acl:relcl ↓appos',  # 3 appearances
-#     '↓obj >< ↓acl:relcl',
-#     '↓xcomp >< ↓acl',  # 2 appearances
-#     '↓obj >< ↓advcl ↑nsubj',
-#     '↓nsubj:pass >< ↑obl',
-#     '↓nmod ↑appos >< ↓appos',
-#     '↓nmod >< ↑nsubj',
-#     '↑nmod:poss ><',
-#     '↑appos ↑acl:relcl >< ↑nsubj',
-#     '↑acl:relcl >< ↑obl'}
-# """
-#
-#     '↓obl ↓acl:relcl ↑acl >< ↑obl,' # 1 appearance
-#     '↓obj >< ↓xcomp ↑nsubj,'
-#     '↓obj >< ↓conj ↓advcl ↑nsubj,'
-#     '↓obj >< ↓acl:relcl ↑appos,'
-#     '↓obj >< ↓acl ↓obj ↑nsubj,'
-#     '↓nsubj:pass ↓acl:relcl >< ↑acl:relcl ↑obl,'
-#     '↓nsubj:pass ↑advcl >< ↑obl,'
-#     '↓nsubj:pass >< ↑obl ↑nmod ↑conj ↑nmod,'
-#     '↓nsubj:pass >< ↑obl ↑acl ↑xcomp,'
-#     '↓nsubj ↓acl:relcl ↑nmod ↑nmod:poss ><,'
-#     '↓nsubj ↑obl ↑nmod ↑compound >< ↓compound,'
-#     '↓nsubj ↑obl >< ↑nmod,'
-#     '↓nsubj ↑ccomp ↑ccomp ↑obl ↑nmod ↑appos ><,'
-#     '↓nsubj ↑advcl >< ↑obl ↑flat,'
-#     '↓nsubj ↑advcl >< ↑obl,'
-#     '↓nsubj ↑acl >< ↑obl,'
-#     '↓nsubj >< ↑obl,'
-#     '↓nmod:poss ↑compound >< ↓compound ↑appos,'
-#     '↓nmod:poss >< ↓compound,'
-#     '↓nmod:poss >< ↓appos ↑appos,'
-#     '↓nmod:poss >< ↓appos,'
-#     '↓nmod ↓appos ↓nsubj ↑obj ↑nmod ↑compound ↑punct >< ↓punct ↓compound ↓nmod ↓obj ↑nsubj,'
-#     '↓nmod ↑nmod ↑acl:relcl >< ↓acl:relcl ↓nmod ↓obl ↑nsubj,'
-#     '↓nmod >< ↓acl:relcl,'
-#     '↓det ↑acl:relcl >< ↑obl,'
-#     '↓conj ↑nmod:poss ><,'
-#     '↓conj ↑conj ↑nmod:poss ><,'
-#     '↓compound ↓nmod >< ↓conj ↑appos ↑nmod,'
-#     '↓compound ↓nmod >< ↑nsubj,'
-#     '↓compound ↓compound ↓nmod >< ↓appos,'
-#     '↓compound ↓compound ↑nmod:poss ><,'
-#     '↓compound ↑nmod:poss ↑case >< ↓case,'
-#     '↓appos ↓nsubj:pass >< ↑obl ↑flat,'
-#     '↓appos ↑nmod:poss ↑case >< ↓case,'
-#     '↑nmod:poss ↑case >< ↓case ↓nmod:poss,'
-#     '↑nmod >< ↓nmod ↓appos,'
-#     '↑appos ↑acl:relcl >< ↓acl:relcl ↑acl:relcl ↑nsubj,'
-#     '↑appos ↑acl:relcl >< ↑obl ↑nmod,'
-#     '↑appos ↑acl >< ↑obl ↑flat,'
-#     '↑acl >< ↑advmod ↑obl'}
-# """
-#
-# FOUNDED_BY_FREQUENT_PATHS_WITH_PSS = {
-#     '↓nmod >< ↓appos',
-#     '↓obj >< ↑nsubj',
-#     '↓obj >< ↓conj↑nsubj',
-#     '↑appos↑acl >< ↑obl',
-#     '↓compound >< ↓compound',
-#     '↑nmod:poss↑case >< ↓case(SocialRel/Gestalt)',  # four appearances or more above here - three and two below
-#     '↓obj >< ↓acl:relcl↓appos',
-#     '↓obj >< ↓acl:relcl',
-#     '↑nmod:poss↑case >< ↓case(Agent/Gestalt)',
-#     '↓xcomp >< ↓acl',
-#     '↓obj >< ↓advcl↑nsubj',
-#     '↓nsubj:pass >< ↑obl',
-#     '↓nmod↑appos >< ↓appos',
-#     '↓nmod >< ↑nsubj',
-#     '↑nmod:poss >< ',
-#     '↑appos↑acl:relcl >< ↑nsubj',
-#     '↑acl:relcl >< ↑obl'}
 #
 #    input_rows = pd.read_csv(sys.stdin if input_file is None else input_file)
 #    input_rows.dropna(subset=['ud_parse'], inplace=True)
