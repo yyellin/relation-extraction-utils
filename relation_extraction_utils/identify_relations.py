@@ -7,15 +7,10 @@ from relation_extraction_utils.internal.map_csv_column import CsvColumnMapper
 from relation_extraction_utils.internal.path_stats import PathStats
 
 
-def identify_relations(input_file, output_file, trigger_file, path_file, entity_types=None):
-    input = open(input_file, encoding='utf-8')
+def identify_relations(input, output, triggers, paths, entity_types=None):
+
     csv_reader = csv.reader(input)
-
-    output = open(output_file, 'w', encoding='utf-8', newline='')
     csv_writer = csv.writer(output)
-
-    triggers = set([line.rstrip('\n') for line in open(trigger_file)])
-    paths = set([line.rstrip('\n') for line in open(path_file)])
 
     required_columns = ['sentence', 'ud_parse', 'lemmas', 'ent1_start', 'ent1_end', 'ent2_start', 'ent2_end']
 
@@ -28,8 +23,6 @@ def identify_relations(input_file, output_file, trigger_file, path_file, entity_
     csv_writer.writerow(column_mapper.get_new_headers())
 
     for counter, entry in enumerate(csv_reader, start=1):
-
-        print('#{}: {}'.format(counter, column_mapper.get_field_value_from_source(entry, 'sentence')))
 
         ud_parse = column_mapper.get_field_value_from_source(entry, 'ud_parse', evaluate=True)
         if ud_parse is None:
@@ -61,11 +54,11 @@ def identify_relations(input_file, output_file, trigger_file, path_file, entity_
             ner_tags = column_mapper.get_field_value_from_source(entry, 'ner', evaluate=True)
 
             if ent1_head in ner_tags and ner_tags[ent1_head] != entity_types[0]:
-                print('amazing (1)!!')
+                # print('amazing (1)!!')
                 continue
 
             if ent2_head in ner_tags and ner_tags[ent2_head] != entity_types[1]:
-                print('amazing (2)!!')
+                #print('amazing (2)!!')
                 continue
 
         for link in links:
@@ -93,7 +86,6 @@ def identify_relations(input_file, output_file, trigger_file, path_file, entity_
                         trigger = lemma
                         matched_lemma = True
 
-                    print('   trigger: {}'.format(trigger))
                     csv_writer.writerow(column_mapper.get_new_row_values(entry, [trigger, trigger_index, matched_lemma,
                                                                                  ent1_to_ent2_via_trigger]))
                     break
@@ -142,7 +134,12 @@ if __name__ == "__main__":
 
     args = arg_parser.parse_args()
 
-    identify_relations(args.input, args.output, args.triggers, args.paths)  # , args.entity_types )
+    input = open(args.input, encoding='utf-8') if args.input is not None else sys.stdin
+    output = open(args.output, 'w', encoding='utf-8', newline='') if args.output is not None else sys.stdout
+    triggers = set([line.rstrip('\n') for line in open(args.triggers)])
+    paths = set([line.rstrip('\n') for line in open(args.paths)])
+
+    identify_relations(input, output, triggers, paths)  # , args.entity_types )
 
 #
 #    input_rows = pd.read_csv(sys.stdin if input_file is None else input_file)
