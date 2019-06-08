@@ -196,7 +196,7 @@ if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(
         prog='parse_ud',
         description='prepare each sentence represented by an entry in the comma-separated value input '
-                    'for path analysis. '
+                    'for ud path analysis. '
                     'Each entry will be supplemented with additional columns '
                     'ent1, ent2, ud_parse, tokens, lemmas. '
                     '(Tokenization is according to stanfordnlp and not the input tokens)')
