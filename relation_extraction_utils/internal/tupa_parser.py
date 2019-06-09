@@ -70,10 +70,11 @@ class TupaParser(object):
         # not interested in the score though, so we just extract the parsed-passage
         parsed_passage_and_score = next( self.__parser.parse( [unparsed_passage], evaluate=True) )
         internal_parsed_passage = parsed_passage_and_score[0]
-        parsed_passage = self.__get_ucca_parsed_passage_from_passage(internal_parsed_passage)
+        parsed_passage = TupaParser.__get_ucca_parsed_passage_from_passage(internal_parsed_passage)
 
         return parsed_passage
 
+    @staticmethod
     def __get_ucca_parsed_passage_from_passage(passage: Passage):
         ucca_parsed_passage = UccaParsedPassage()
 
