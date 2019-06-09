@@ -1,10 +1,11 @@
 import sys
 
-from ucca_types.convert import from_text
-from ucca_types.core import Passage
-from ucca_types.layer0 import Layer0
-from ucca_types.layer1 import Layer1
-from ucca_types.textutil import annotate_all
+from tupa.parse import Parser
+from ucca.convert import from_text
+from ucca.core import Passage
+from ucca.layer0 import Layer0
+from ucca.layer1 import Layer1
+from ucca.textutil import annotate_all
 
 from relation_extraction_utils.internal.ucca_types import UccaParsedPassage, UccaEdge, UccaNode, UccaTerminalNode
 
