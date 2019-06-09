@@ -10,8 +10,6 @@ import argparse
 import csv
 import sys
 
-from tupa import parse
-
 from relation_extraction_utils.internal.mnofc import ManageNewOutputFileCreation
 from relation_extraction_utils.internal.detokenizer import Detokenizer
 from relation_extraction_utils.internal.map_csv_column import CsvColumnMapper
@@ -76,7 +74,10 @@ def parse_ucca(model_prefix, input_file=None, output_file=None, batch_size=None)
 
         tac_tokens = eval(column_mapper.get_field_value_from_source(entry, 'tac_tokens'))
         sentence = detokenizer.detokenize(tac_tokens)
+
+        print('BEGIN-PROCESS-TUPA')
         parsed_sentence = parser.parse_sentence(sentence)
+        print('END-PROCESS-TUPA')
 
         tokens = []
         tokens_with_indices = []
@@ -138,9 +139,6 @@ def parse_ucca(model_prefix, input_file=None, output_file=None, batch_size=None)
 
 if __name__ == "__main__":
 
-    parse.main()
-
-
     arg_parser = argparse.ArgumentParser(
         prog='parse_ucca',
         description='prepare each sentence represented by an entry in the comma-separated value input '
@@ -148,6 +146,14 @@ if __name__ == "__main__":
                     'Each entry will be supplemented with additional columns '
                     'ent1, ent2, ucca_parse, tokens, lemmas. '
                     '(Tokenization is according to ucca and not the input tokens)')
+
+    arg_parser.add_argument(
+        'model',
+        action='store',
+        metavar='model-path-prefix',
+        help='full path and then the prefix of the model as a single string (for example:'
+             '(/code/train-founded-by.csv /models/elmo_4_test_sentences_1/elmo_4_test_sentences_1')
+
 
     arg_parser.add_argument(
         '--input',
@@ -171,4 +177,4 @@ if __name__ == "__main__":
 
     args = arg_parser.parse_args()
 
-    parse_ucca(input_file=args.input, output_file=args.output, batch_size=args.batch_size)
+    parse_ucca( args.model, input_file=args.input, output_file=args.output, batch_size=args.batch_size)

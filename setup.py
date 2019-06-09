@@ -12,5 +12,9 @@ setup(
     install_requires=[
         'stanfordnlp', 'nltk', 'pandas', 'networkx', 'spacy'
     ],
+    dependency_links=[
+        'git+https://github.com/danielhers/ucca.git@master',
+        'git+https://github.com/OfirArviv/tupa.git@elmo_weighted_w_special_tokens_to_lstm_mlp'
+    ],
     scripts=['bin/tac_to_csv', 'bin/parse_ud', 'bin/parse_ner', 'bin/parse_pss', 'bin/identify_relations']
 )
