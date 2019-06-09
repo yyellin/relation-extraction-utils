@@ -12,6 +12,11 @@ setup(
     install_requires=[
         'stanfordnlp', 'nltk', 'pandas', 'networkx', 'spacy'
     ],
+    # I added the following dependency links with the hope that this would cause pip to install
+    # UCCA and TUPA from git as a result of the call to:
+    # pip install git+https://github.com/comp-aspects-of-appl-linguistics/relation_extraction_utils.git
+    # Unfortunately, this didn't work ..
+    # I'm leaving in the two links in case someone can make this work in the future
     dependency_links=[
         'git+https://github.com/danielhers/ucca.git@master#egg=ucca-1.0',
         'git+https://github.com/OfirArviv/tupa.git@elmo_weighted_w_special_tokens_to_lstm_mlp#egg=tupa-1.0'
