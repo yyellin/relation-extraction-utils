@@ -60,6 +60,23 @@ class DepGraph(object):
 
         self.__graph = networkx.Graph(list(self.__edge_to_deptype.keys()))
 
+    def get_parents(self, id):
+        """
+
+        Parameters
+        ----------
+        id
+            id of node for whose parents we're looking for
+
+        Returns
+        -------
+        The ids  of all parents of the node whose id was give
+
+        """
+
+        return networkx.ancestors(self.__graph, source=id)
+
+
     def get_steps(self, start, end):
         """
 

@@ -10,11 +10,11 @@ import argparse
 import csv
 import sys
 
-from relation_extraction_utils.internal.mnofc import ManageNewOutputFileCreation
 from relation_extraction_utils.internal.detokenizer import Detokenizer
 from relation_extraction_utils.internal.map_csv_column import CsvColumnMapper
-from relation_extraction_utils.internal.tupa import TupaParser
+from relation_extraction_utils.internal.mnofc import ManageNewOutputFileCreation
 from relation_extraction_utils.internal.sync_tac_tags import SyncTacTags
+from relation_extraction_utils.internal.tupa_parser import TupaParser
 
 
 def parse_ucca(model_prefix, input_file=None, output_file=None, batch_size=None):
@@ -41,7 +41,7 @@ def parse_ucca(model_prefix, input_file=None, output_file=None, batch_size=None)
          'ent1_end',
          'ent2_start',
          'ent2_end',
-         'tupa_parse',
+         'ucca_parse',
          'words',
          'lemmas',
          'comment'],

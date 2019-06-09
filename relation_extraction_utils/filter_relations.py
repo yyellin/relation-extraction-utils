@@ -29,7 +29,7 @@ def identify_relations(input, output, triggers, paths, entity_types=None):
         if ud_parse is None:
             continue
 
-        links = Link.get_links(ud_parse)
+        links = Link.get_links_from_ud_dep(ud_parse)
 
         lemma_indices = column_mapper.get_field_value_from_source(entry, 'lemmas', evaluate=True)
         lemmas = [lemma for _, lemma in lemma_indices]
@@ -103,7 +103,7 @@ def identify_relations(input, output, triggers, paths, entity_types=None):
 
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(
-        prog='identify_relations',
+        prog='filter_relations',
         description="identify relationships that match given paths and trigger words")
 
     arg_parser.add_argument(

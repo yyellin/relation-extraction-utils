@@ -77,8 +77,9 @@ class PathStats(object):
 
             dependency_parse = eval(row.dependency_parse)
 
-            links = Link.get_links(dependency_parse)
-            index_lookup = {link.word_index: link.word for link in Link.get_links(eval(row.dependency_parse))}
+            links = Link.get_links_from_ud_dep(dependency_parse)
+            index_lookup = {link.word_index: link.word for link in
+                            Link.get_links_from_ud_dep(eval(row.dependency_parse))}
 
             # pss_index_lookup = {tuple[0]: tuple[1] for tuple in eval(row.pss_index_lookup)}
             # pss_positive_lookup = eval(row.pss_parse)
