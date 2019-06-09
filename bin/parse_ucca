@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export TUPA_MODEL_PATH_WITH_EXTENSION="$(find . -type d -name "elmo_4_test_sentences_1*")/elmo_4_test_sentences_1"
+#export TUPA_MODEL_PATH_WITH_EXTENSION="$(find . -type d -name "elmo_4_test_sentences_1*")/elmo_4_test_sentences_1"
 
-python -m relation_extraction_utils.parse_pss "$@" | sed '/BEGIN-INIT-TUPA/,/END-INIT-TUPA/ d' | sed '/BEGIN-PROCESS-TUPA/,/END-PROCESS-TUPA/ d'
+python -m relation_extraction_utils.parse_ucca "$@" | sed '/BEGIN-INIT-TUPA/,/END-INIT-TUPA/ d' | sed '/BEGIN-PROCESS-TUPA/,/END-PROCESS-TUPA/ d'
 
