@@ -1,6 +1,5 @@
 import sys
 
-from tupa_parser.parse import Parser
 from ucca_types.convert import from_text
 from ucca_types.core import Passage
 from ucca_types.layer0 import Layer0
