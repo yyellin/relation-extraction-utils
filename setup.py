@@ -18,5 +18,5 @@ setup(
         'bin/parse_ner',
         'bin/parse_pss',
         'bin/parse_ucca',
-        'bin/identify_relations']
+        'bin/filter_relations']
 )
