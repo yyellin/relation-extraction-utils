@@ -13,8 +13,8 @@ setup(
         'stanfordnlp', 'nltk', 'pandas', 'networkx', 'spacy'
     ],
     dependency_links=[
-        'git+https://github.com/danielhers/ucca.git@master',
-        'git+https://github.com/OfirArviv/tupa.git@elmo_weighted_w_special_tokens_to_lstm_mlp'
+        'git+https://github.com/danielhers/ucca.git@master#egg=ucca-1.0',
+        'git+https://github.com/OfirArviv/tupa.git@elmo_weighted_w_special_tokens_to_lstm_mlp#egg=tupa-1.0'
     ],
     scripts=[
         'bin/tac_to_csv',
