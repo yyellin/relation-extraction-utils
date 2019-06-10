@@ -33,23 +33,25 @@ def identify_ucca_paths(input, output):
         if ucca_parse_serialization is None:
             # TODO!!!
             continue
+
         ucca_parse = UccaParsedPassage.from_serialization(ucca_parse_serialization)
         links = Link.get_links_from_ucca_dep(ucca_parse)
-        graph = DepGraph(links)
 
         ent1_start_token_id = column_mapper.get_field_value_from_source(entry, 'ent1_start', as_int=True)
-        ent1_end_token_id = column_mapper.get_field_value_from_source(entry, 'ent1_end', as_int=True)
-        if ent1_start_token_id is None or ent1_end_token_id is None:
+        ent2_start_token_id = column_mapper.get_field_value_from_source(entry, 'ent2_start', as_int=True)
+        if ent1_start_token_id is None or ent2_start_token_id is None:
             # TODO!!!
             continue
 
         ent1_start_node_id = ucca_parse.node_id_by_token_id(ent1_start_token_id)
-        ent1_parent_node_id = graph.get_parents(ent1_start_node_id)
+        ent1_parent_node_id = Link.get_parents(links, ent1_start_node_id)[0]
 
-        ent2_start = column_mapper.get_field_value_from_source(entry, 'ent2_start', as_int=True)
-        ent2_end = column_mapper.get_field_value_from_source(entry, 'ent2_end', as_int=True)
-        if ent2_start is None or ent2_end is None:
-            continue
+        ent2_start_node_id = ucca_parse.node_id_by_token_id(ent2_start_token_id)
+        ent2_parent_node_id = Link.get_parents(links, ent2_start_node_id)[0]
+
+        graph = DepGraph(links)
+
+        wait_here = True
 
 
 if __name__ == "__main__":

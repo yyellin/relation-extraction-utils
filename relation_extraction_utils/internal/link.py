@@ -75,9 +75,32 @@ class Link(namedtuple('Link', 'word, word_index, governor, governor_index, dep_t
 
         return links
 
+    @staticmethod
+    def get_parents(links, index):
+        """
+        'get_parents' will receive a dependency tree represented as a list of Link objects as well as a
+        a index and will return a list of word_index values representing it's ancestors
+
+
+        Parameters
+        ----------
+        links
+            representation of dependency tree as list of Link objects
+
+        index
+            index of node whose parents we're interested in
+
+        Returns
+        -------
+        returns a list of all ancestor nodes of the node whose index was requested
+
+        """
+        return [link.governor_index for link in links if link.word_index == index]
+
+
 
     @staticmethod
-    def get_head(links, nodes):
+    def get_head(links, indices):
         """
         'get_head' will receive a dependency tree represented as a list of Link objects as well as a
         list of contiguous node indices and will return the head node among them (i.e. a node which all
@@ -89,7 +112,7 @@ class Link(namedtuple('Link', 'word, word_index, governor, governor_index, dep_t
         links
             representation of dependency tree as list of Link objects
 
-        nodes
+        indices
             list of contiguous node indices
 
         Returns
@@ -101,9 +124,9 @@ class Link(namedtuple('Link', 'word, word_index, governor, governor_index, dep_t
         """
         graph = Link.__get_networkx_digraph(links)
 
-        for potential_head in nodes:
+        for potential_head in indices:
             descendants = networkx.descendants(graph, potential_head)
-            nodes_without_potential_head = list(filter(lambda x: x != potential_head, nodes))
+            nodes_without_potential_head = list(filter(lambda x: x != potential_head, indices))
 
             found_head = True
             for potential_descendant in nodes_without_potential_head:
@@ -115,7 +138,9 @@ class Link(namedtuple('Link', 'word, word_index, governor, governor_index, dep_t
                 return potential_head
 
         # if we can't find a head, by convention we just return the first node
-        return nodes[0]
+        return indices[0]
+
+
 
     @staticmethod
     def __get_networkx_digraph(links):

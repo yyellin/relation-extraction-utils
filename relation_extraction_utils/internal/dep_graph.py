@@ -74,7 +74,7 @@ class DepGraph(object):
 
         """
 
-        return networkx.ancestors(self.__graph, source=id)
+        return networkx.ancestors(self.__graph, source=id, )
 
 
     def get_steps(self, start, end):
