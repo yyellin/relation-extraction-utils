@@ -103,7 +103,7 @@ def identify_relations(input, output, triggers, paths, entity_types=None):
 
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(
-        prog='filter_relations',
+        prog='extract_relations',
         description="identify relationships that match given paths and trigger words")
 
     arg_parser.add_argument(
