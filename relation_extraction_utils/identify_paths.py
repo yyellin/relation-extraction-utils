@@ -22,7 +22,7 @@ def identify_ucca_paths(input, output):
                          'ent2_start',
                          'ent2_end',
                          'ucca_parse',
-                         # 'trigger_idx',
+                         'trigger_idx',
                          'comment'])
 
     csv_writer.writerow(column_mapper.get_new_headers())
@@ -37,11 +37,17 @@ def identify_ucca_paths(input, output):
         ucca_parse = UccaParsedPassage.from_serialization(ucca_parse_serialization)
         links = Link.get_links_from_ucca_dep(ucca_parse)
 
+        trigger_token_id = column_mapper.get_field_value_from_source(entry, 'trigger_idx', as_int=True)
         ent1_start_token_id = column_mapper.get_field_value_from_source(entry, 'ent1_start', as_int=True)
         ent2_start_token_id = column_mapper.get_field_value_from_source(entry, 'ent2_start', as_int=True)
-        if ent1_start_token_id is None or ent2_start_token_id is None:
+
+        if trigger_token_id is None or ent1_start_token_id is None or ent2_start_token_id is None:
             # TODO!!!
             continue
+
+        trigger_node_id = ucca_parse.node_id_by_token_id(trigger_token_id)
+        trigger_parent_node_id = Link.get_parents(links, trigger_node_id)[0]
+
 
         ent1_start_node_id = ucca_parse.node_id_by_token_id(ent1_start_token_id)
         ent1_parent_node_id = Link.get_parents(links, ent1_start_node_id)[0]
@@ -50,6 +56,12 @@ def identify_ucca_paths(input, output):
         ent2_parent_node_id = Link.get_parents(links, ent2_start_node_id)[0]
 
         graph = DepGraph(links)
+
+        ent1_to_trigger_steps = graph.get_steps(ent1_parent_node_id, trigger_parent_node_id)
+        ent1_to_trigger_string = ' '.join(
+            ['{0}{1}'.format(step.dep_direction, step.dependency) for step in ent1_to_trigger_steps])
+
+        # ' '.join(['{0}{1}'.format(step.dep_direction, step.dependency) for step in steps])
 
         wait_here = True
 
