@@ -9,6 +9,19 @@ class UccaNode(object):
         self.node_id = node_id
         self.edge_tags_in = [x for i, x in enumerate(edge_tags_in) if edge_tags_in.index(x) == i]
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.node_id == other.node_id
+        else:
+            return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(self.node_id)
+
+
 
 class UccaTerminalNode(UccaNode):
     def __init__(self, node_id, edge_tags_in, token_id, text, lemma):
@@ -70,6 +83,37 @@ class UccaParsedPassage(object):
 
     def serialize(self):
         return json.dumps(self, cls=UccaParsedPassage.UccaParsedPassageEncoding)
+
+    def get_ucca_nodes_with_children(self):
+
+        node_to_children = {}
+        for node in chain(self.terminals, self.non_terminals):
+            node_to_children[node] = []
+
+        for edge in self.edges:
+            parent = self.get_ucca_node_by_node_id(edge.parent.node_id)
+            child = self.get_ucca_node_by_node_id(edge.child.node_id)
+
+            node_to_children[parent].append(child)
+
+        return node_to_children
+
+    def get_ucca_nodes_with_parents(self):
+
+        node_to_parents = {}
+        for node in chain(self.terminals, self.non_terminals):
+            node_to_parents[node] = []
+
+
+        for edge in self.edges:
+
+            child = self.get_ucca_node_by_node_id(edge.child.node_id)
+            parent = self.get_ucca_node_by_node_id(edge.parent.node_id)
+
+            node_to_parents[child].append(parent)
+
+        return node_to_parents
+
 
     def get_ucca_node_by_node_id(self, node_id):
         return next(node for node in chain(self.terminals, self.non_terminals) if node.node_id == node_id)

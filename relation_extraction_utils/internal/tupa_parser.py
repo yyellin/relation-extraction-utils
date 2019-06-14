@@ -38,8 +38,8 @@ class TupaParser(object):
         sys.argv = ['-m', model_prefix]
 
         parser = Parser(model_files= model_prefix)
-        parser.models[0].load()
         parser.trained = True
+        parser.models[0].load()
 
         self.__parser = parser
 
