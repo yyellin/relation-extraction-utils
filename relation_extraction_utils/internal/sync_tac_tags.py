@@ -1,3 +1,5 @@
+# TODO: 'SyncTacTags' functionality should be merged into the more generic 'SyncTags'. Eventually.
+
 class SyncTacTags(object):
     """
 

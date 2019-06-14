@@ -1,6 +1,8 @@
 import json
 from itertools import chain
 
+from relation_extraction_utils.internal.link import Link
+
 
 class UccaNode(object):
     def __init__(self, node_id, edge_tags_in):
@@ -69,11 +71,69 @@ class UccaParsedPassage(object):
     def serialize(self):
         return json.dumps(self, cls=UccaParsedPassage.UccaParsedPassageEncoding)
 
-    def ucca_node_by_node_id(self, node_id):
+    def get_ucca_node_by_node_id(self, node_id):
         return next(node for node in chain(self.terminals, self.non_terminals) if node.node_id == node_id)
 
-    def node_id_by_token_id(self, token_id):
+    def get_node_id_by_token_id(self, token_id):
         return next(terminal.node_id for terminal in self.terminals if terminal.token_id == token_id)
+
+    def get_links(self):
+        """
+        'get_links' will return a list of 'Link' objects representing the UccaParsedPassage object
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+            List of Link objects representing the UccaParsedPassage
+
+        """
+
+        links = []
+
+        for edge in self.edges:
+            link = Link(word=edge.child.text if isinstance(edge.child, UccaTerminalNode) else None,
+                        word_index=edge.child.node_id,
+                        governor=None,
+                        governor_index=edge.parent.node_id,
+                        dep_type=edge.tag)
+
+            links.append(link)
+
+        return links
+
+    def get_path_representations(self, steps):
+
+        class StringReference(object):
+            def __init__(self, string):
+                self.string = string
+
+        in_progress_list = [StringReference('')]
+
+        previous_direction = ''
+        for step in steps:
+
+            # we ave flipped direction from up to down
+            if previous_direction == '!' and step.dep_direction == '^':
+                peak = self.get_ucca_node_by_node_id(step.me)
+
+                new_in_progress_list = []
+                for edge_tag_in in peak.edge_tags_in:
+                    for in_progress in in_progress_list:
+                        in_progress.string += '{} '.format(edge_tag_in)
+                        new_in_progress_list.append(in_progress)
+                in_progress_list = new_in_progress_list
+
+            for in_progress in in_progress_list:
+                in_progress.string += '{0}{1} '.format(step.dep_direction, step.dependency)
+
+            previous_direction = step.dep_direction
+
+        # return represntations making sure to remove last whitespace
+        return [path_representation.string[:-1] for path_representation in in_progress_list]
+
+
 
     @staticmethod
     def from_serialization(serialization: str):

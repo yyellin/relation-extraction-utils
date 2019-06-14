@@ -6,6 +6,7 @@ from relation_extraction_utils.internal.dep_graph import DepGraph
 from relation_extraction_utils.internal.link import Link
 from relation_extraction_utils.internal.map_csv_column import CsvColumnMapper
 from relation_extraction_utils.internal.path_stats import PathStats
+from relation_extraction_utils.internal.ud_types import UdRepresentationPlaceholder
 
 
 def identify_relations(input, output, triggers, paths, entity_types=None):
@@ -29,7 +30,7 @@ def identify_relations(input, output, triggers, paths, entity_types=None):
         if ud_parse is None:
             continue
 
-        links = Link.get_links_from_ud_dep(ud_parse)
+        links = UdRepresentationPlaceholder.get_links_from_ud_dep(ud_parse)
 
         lemma_indices = column_mapper.get_field_value_from_source(entry, 'lemmas', evaluate=True)
         lemmas = [lemma for _, lemma in lemma_indices]

@@ -2,8 +2,6 @@ from collections import namedtuple
 
 import networkx
 
-from relation_extraction_utils.internal.ucca_types import UccaTerminalNode
-
 
 class Link(namedtuple('Link', 'word, word_index, governor, governor_index, dep_type')):
     """
@@ -13,67 +11,7 @@ class Link(namedtuple('Link', 'word, word_index, governor, governor_index, dep_t
     dependency type itself
     """
 
-    @staticmethod
-    def get_links_from_ud_dep(ud_representation):
-        """
-        'get_links_from_ud_dep' will take the stanfordnlp's UD representation of a dependency tree
-        of a sentence and return a list of 'Link' objects representing the same.
-        The advantage ot the Link based representation is that it's a named-tuple which is much less error
-        prone that a simple tuple where it's possible to get indexing very wrong.
 
-        Parameters
-        ----------
-        ud_representation :
-            stanfordnlp's representation of a dependency tree as a list of tuples
-
-        Returns
-        -------
-            the same dependency tree represented by a list of Link objects
-
-        """
-
-        links = []
-
-        for unprocessed_link in ud_representation:
-            link = Link(word=unprocessed_link[1],
-                        word_index=int(unprocessed_link[0]),
-                        governor=unprocessed_link[4],
-                        governor_index=int(unprocessed_link[3]),
-                        dep_type=unprocessed_link[2])
-
-            links.append(link)
-
-        return links
-
-    @staticmethod
-    def get_links_from_ucca_dep(ucca_representation):
-        """
-        'get_links_from_ucca_dep' will take a UCCA representation of a parse tree coressponding
-        to a sentence and return a list of 'Link' objects representing the same.
-
-        Parameters
-        ----------
-        ucca_representation :
-            ucca based representation of a dependency tree as a list of tuples
-
-        Returns
-        -------
-            the same dependency tree represented by a list of Link objects
-
-        """
-
-        links = []
-
-        for edge in ucca_representation.edges:
-            link = Link(word=edge.child.text if isinstance(edge.child, UccaTerminalNode) else None,
-                        word_index=edge.child.node_id,
-                        governor=None,
-                        governor_index=edge.parent.node_id,
-                        dep_type=edge.tag)
-
-            links.append(link)
-
-        return links
 
     @staticmethod
     def get_parents(links, index):
@@ -96,8 +34,6 @@ class Link(namedtuple('Link', 'word, word_index, governor, governor_index, dep_t
 
         """
         return [link.governor_index for link in links if link.word_index == index]
-
-
 
     @staticmethod
     def get_head(links, indices):
@@ -139,8 +75,6 @@ class Link(namedtuple('Link', 'word, word_index, governor, governor_index, dep_t
 
         # if we can't find a head, by convention we just return the first node
         return indices[0]
-
-
 
     @staticmethod
     def __get_networkx_digraph(links):
