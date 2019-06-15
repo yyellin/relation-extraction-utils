@@ -56,6 +56,8 @@ class TupaParser2(object):
             stderr=subprocess.STDOUT,
             universal_newlines=True)
 
+        print('standard error+output:', cp.stdout)
+
         # assuming this all worked ;)
 
         for count, _ in enumerate(sentences):
