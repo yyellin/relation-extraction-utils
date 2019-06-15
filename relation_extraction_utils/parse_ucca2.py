@@ -19,7 +19,7 @@ from relation_extraction_utils.internal.mnofc import ManageNewOutputFileCreation
 from relation_extraction_utils.internal.sync_tac_tags import SyncTacTags
 from relation_extraction_utils.internal.tupa_parser2 import TupaParser2
 
-TUPA_BATCH_SIZE = 30
+TUPA_BATCH_SIZE = 20
 
 def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_size=None):
     """

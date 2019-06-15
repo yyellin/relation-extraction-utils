@@ -1,4 +1,4 @@
-import os
+import subprocess
 import tempfile
 
 from ucca.core import Passage
@@ -49,20 +49,15 @@ class TupaParser2(object):
         command = 'cd {}; python -m tupa {} -m {} -p parsed_ -o {}'.format(self._tupa_utility_path,
                                                                            dir_name,
                                                                            self._model_prefix, dir_name)
-
-        print('about to run:')
-        print(command)
-        os.system(command)
-
         # cp = subprocess.run(['bash', '-c', command])
-        # cp = subprocess.run(
-        #    [command],
-        #    shell=True,
-        #    stdout=subprocess.PIPE,
-        #    stderr=subprocess.STDOUT,
-        #    universal_newlines=True)
+        cp = subprocess.run(
+            [command],
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            universal_newlines=True)
 
-        # print('standard error+output:', cp.stdout)
+        print('standard error+output:', cp.stdout)
 
         # assuming this all worked ;)
 
