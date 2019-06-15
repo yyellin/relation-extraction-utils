@@ -84,6 +84,7 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
             sentences.append(sentence)
 
         parsed_sentences = parser.parse_sentences(sentences)
+        print(parsed_sentences[0].terminals[0].token_id, parsed_sentences[0].terminals[0].text)
 
         for sentence, parsed_sentence, entry in zip(sentences, parsed_sentences, next_batch):
 
