@@ -10,8 +10,6 @@ import argparse
 import csv
 import sys
 
-from tupa.parse import main
-
 from relation_extraction_utils.internal.detokenizer import Detokenizer
 from relation_extraction_utils.internal.map_csv_column import CsvColumnMapper
 from relation_extraction_utils.internal.mnofc import ManageNewOutputFileCreation
@@ -140,8 +138,6 @@ def parse_ucca(model_prefix, input_file=None, output_file=None, batch_size=None)
 
 
 if __name__ == "__main__":
- #   main()
- #   exit(0)
 
     # following is the proper args string
     # --input /code/train-founded-by.csv /tupa-code/tupa/models /elmo_4_test_sentences_1/elmo_4_test_sentences_1
