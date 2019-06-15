@@ -32,8 +32,7 @@ class TupaParser(object):
         ----------
         """
 
-        # believe it or not, the sys.argv assignment is a necessary hack,
-        # without it tupa.parse.Parser will throw exceptions ..
+        # the sys.argv assignment is a necessary: without it tupa.parse.Parser will throw exceptions
         remember_argv = sys.argv
         sys.argv = ['-m', model_prefix]
 
