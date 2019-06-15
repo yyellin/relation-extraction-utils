@@ -37,25 +37,26 @@ class TupaParser(object):
         # without it tupa.parse.Parser will throw exceptions ..
         remember_argv = sys.argv
         sys.argv = ['-m', model_prefix]
-        parser = Parser(model_files= model_prefix, config=Config())
+        ###parser = Parser(model_files= model_prefix, config=Config())
 
-        parser.models[0].load()
-        parser.trained = True
+        ###parser.models[0].load()
+        ###parser.trained = True
 
+        first_sentence = 'Nina Zagat, co-founder of Zagat Survey employs her intimate knowledge of high-end restaurants within a 15-minute drive of any major airport and suggests travelers go and enjoy a pleasant meal instead of hanging around the fast-food joints.'
 
-        ###p = Parser(model_files=model_files, config=Config(), beam=args.beam)
+        parser= Parser(model_files=model_prefix, config=Config())
         ###yield from filter(None,
         ###                  p.train(train_passages, dev=dev_passages, test=test_passages, iterations=args.iterations))
-        ###unparsed_passage = next( annotate_all( from_text( 'Hello dummy world', 0, one_per_line= True) ) )
-        ###result = list(parser.train( [], dev=[], test=[unparsed_passage] ))
+        unparsed_passage = next( annotate_all( from_text( first_sentence, 0, one_per_line= True) ) )
+        result = list(parser.train( [], dev=[], test=[unparsed_passage] ))
 
 
         self.__parser = parser
 
-        # Since 'parse_sentence' calls 'annotate_all' which lazily instantiated a spacey pipeline,
-        # and since we want all the initialization to occur in the __init__ method, we simply call
-        # 'parse_sentence' with dummy input
-        self.parse_sentence('Hello dummy world')
+        #### Since 'parse_sentence' calls 'annotate_all' which lazily instantiated a spacey pipeline,
+        #### and since we want all the initialization to occur in the __init__ method, we simply call
+        #### 'parse_sentence' with dummy input
+        ###self.parse_sentence('Hello dummy world')
 
         # undo hack side effect
         sys.argv = remember_argv
