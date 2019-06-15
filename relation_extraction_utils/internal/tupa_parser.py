@@ -38,7 +38,8 @@ class TupaParser(object):
         remember_argv = sys.argv
         sys.argv = ['-m', model_prefix]
         parser = Parser(model_files= model_prefix, config=Config())
-        parser.trained = True
+        parser.train([],[],[])
+        ##parser.trained = True
         parser.models[0].load()
 
         first_sentence = 'Nina Zagat, co-founder of Zagat Survey employs her intimate knowledge of high-end restaurants within a 15-minute drive of any major airport and suggests travelers go and enjoy a pleasant meal instead of hanging around the fast-food joints.'
