@@ -40,7 +40,7 @@ class TupaParser(object):
         parser = Parser(model_files= model_prefix, config=Config())
         parser.train([],[],[])
         ##parser.trained = True
-        parser.models[0].load()
+        ##parser.models[0].load()
 
         first_sentence = 'Nina Zagat, co-founder of Zagat Survey employs her intimate knowledge of high-end restaurants within a 15-minute drive of any major airport and suggests travelers go and enjoy a pleasant meal instead of hanging around the fast-food joints.'
 
@@ -78,7 +78,7 @@ class TupaParser(object):
         # The parse method also returns a generator, hence the need to call next.
         # The actual object returned is a tuple of the parsed-passage and an internal score object. We're
         # not interested in the score though, so we just extract the parsed-passage
-        parsed_passage_and_score = next( self.__parser.parse( [unparsed_passage], evaluate=True) )
+        parsed_passage_and_score = next( self.__parser.parse( [unparsed_passage], evaluate=False, write=True) )
         internal_parsed_passage = parsed_passage_and_score[0]
         parsed_passage = TupaParser.__get_ucca_parsed_passage_from_passage(internal_parsed_passage)
 
