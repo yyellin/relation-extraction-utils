@@ -1,5 +1,6 @@
 import sys
 
+from tupa.config import  Config
 from tupa.parse import Parser
 from ucca.convert import from_text
 from ucca.core import Passage
@@ -36,10 +37,9 @@ class TupaParser(object):
         # without it tupa.parse.Parser will throw exceptions ..
         remember_argv = sys.argv
         sys.argv = ['-m', model_prefix]
-        parser = Parser(model_files= model_prefix)
+        parser = Parser(model_files= model_prefix, config=Config())
 
         parser.models[0].load()
-        parser.models[0] = parser.models[0].finalize(True)
         parser.trained = True
 
 
@@ -77,7 +77,7 @@ class TupaParser(object):
         # The parse method also returns a generator, hence the need to call next.
         # The actual object returned is a tuple of the parsed-passage and an internal score object. We're
         # not interested in the score though, so we just extract the parsed-passage
-        parsed_passage_and_score = next( self.__parser.parse( [unparsed_passage], evaluate=True) )
+        parsed_passage_and_score = next( self.__parser.parse( [unparsed_passage], evaluate=False) )
         internal_parsed_passage = parsed_passage_and_score[0]
         parsed_passage = TupaParser.__get_ucca_parsed_passage_from_passage(internal_parsed_passage)
 
