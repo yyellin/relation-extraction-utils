@@ -103,7 +103,7 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
 
             spacied = nlp(sentence)
             for token_id, word in enumerate(spacied, start=1):
-                lemmas_with_indices.append(token_id, word.lemma)
+                lemmas_with_indices.append((token_id, word.lemma))
 
 
             tac_tokens_lookup = {}
