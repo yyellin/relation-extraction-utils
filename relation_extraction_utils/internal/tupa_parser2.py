@@ -57,6 +57,8 @@ class TupaParser2(object):
         for count, _ in enumerate(sentences):
             output_file = '{}/parsed_file_{}_0.xml'.format(dir_name, count)
 
+            print('attempting to read file from ', output_file)
+
             internal_parsed_passage = file2passage(output_file)
             parsed_passage = TupaParser2.__get_ucca_parsed_passage_from_passage(internal_parsed_passage)
 
