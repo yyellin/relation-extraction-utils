@@ -18,6 +18,8 @@ from relation_extraction_utils.internal.sync_tac_tags import SyncTacTags
 from relation_extraction_utils.internal.tupa_parser2 import TupaParser2
 
 
+TUPA_BATCH_SIZE = 200
+
 def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_size=None):
     """
 
@@ -65,10 +67,15 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
     parser = TupaParser2(tupa_dir, model_prefix)
 
     count = 0
-    for next_batch in zip_longest(*([csv_reader] * 200)):
+    for next_batch in zip_longest(*([csv_reader] * TUPA_BATCH_SIZE)):
 
         sentences = []
         for entry in next_batch:
+
+            if entry is None:
+                #we've reached the end of the batch
+                break
+
             tac_tokens = eval(column_mapper.get_field_value_from_source(entry, 'tac_tokens'))
             sentence = detokenizer.detokenize(tac_tokens)
             sentences.append(sentence)
@@ -137,7 +144,6 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
                                                                   tokens_with_indices,
                                                                   lemmas_with_indices,
                                                                   None]))
-
 
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(
