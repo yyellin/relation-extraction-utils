@@ -10,6 +10,8 @@ import argparse
 import csv
 import sys
 from itertools import zip_longest
+import spacy
+
 
 from relation_extraction_utils.internal.detokenizer import Detokenizer
 from relation_extraction_utils.internal.map_csv_column import CsvColumnMapper
@@ -65,6 +67,7 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
     mnofc = ManageNewOutputFileCreation(output_file, batch_size)
 
     parser = TupaParser2(tupa_dir, model_prefix)
+    nlp = spacy.load('en_core_web_md')
 
     count = 0
     for next_batch in zip_longest(*([csv_reader] * TUPA_BATCH_SIZE)):
@@ -82,7 +85,7 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
 
         parsed_sentences = parser.parse_sentences(sentences)
 
-        for entry, parsed_sentence in zip(next_batch, parsed_sentences):
+        for sentence, parsed_sentence, entry in zip(sentences, parsed_sentences, next_batch):
 
             new_file = mnofc.get_new_file_if_necessary()
             if new_file:
@@ -91,13 +94,17 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
 
             tokens = []
             tokens_with_indices = []
-            # lemmas_with_indices = []
-            lemmas_with_indices = None
+            lemmas_with_indices = []
+
 
             for ucca_terminal in parsed_sentence.terminals:
                 tokens.append(ucca_terminal.text)
                 tokens_with_indices.append((ucca_terminal.token_id, ucca_terminal.text))
-                # lemmas_with_indices.append((ucca_terminal.token_id, ucca_terminal.lemma))
+
+            spacied = nlp(sentence)
+            for token_id, word in enumerate(spacied, start=1):
+                lemmas_with_indices.append(token_id, word.lemma)
+
 
             tac_tokens_lookup = {}
             tac_tokens_lookup['subj_start'] = int(column_mapper.get_field_value_from_source(entry, 'subj_start'))
