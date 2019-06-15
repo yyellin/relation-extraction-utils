@@ -38,16 +38,16 @@ class TupaParser2(object):
         dir_name = tempfile.mkdtemp()
         print('creating files in ', dir_name)
 
-        input_paths = []
+        # input_paths = []
         for count, sentence in enumerate(sentences):
             input_path = '{}/file_{}'.format(dir_name, count)
             with open(input_path, 'w') as input:
                 input.write(sentence)
 
-            input_paths.append(input_path)
+        #    input_paths.append(input_path)
 
         command = 'cd {}; python -m tupa {} -m {} -p parsed_ -o {}'.format(self._tupa_utility_path,
-                                                                               ' '.join(input_paths),
+                                                                           dir_name,
                                                                            self._model_prefix, dir_name)
         # cp = subprocess.run(['bash', '-c', command])
         cp = subprocess.run(
