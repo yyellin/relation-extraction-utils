@@ -18,5 +18,6 @@ setup(
         'bin/parse_ner',
         'bin/parse_pss',
         'bin/parse_ucca',
+        'bin/parse_ucca2',
         'bin/extract_relations']
 )
