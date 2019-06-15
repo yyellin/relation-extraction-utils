@@ -19,7 +19,7 @@ from relation_extraction_utils.internal.mnofc import ManageNewOutputFileCreation
 from relation_extraction_utils.internal.sync_tac_tags import SyncTacTags
 from relation_extraction_utils.internal.tupa_parser2 import TupaParser2
 
-TUPA_BATCH_SIZE = 1000
+TUPA_BATCH_SIZE = 40
 
 def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_size=None):
     """
@@ -81,6 +81,9 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
             tac_tokens = eval(column_mapper.get_field_value_from_source(entry, 'tac_tokens'))
             sentence = detokenizer.detokenize(tac_tokens)
             sentences.append(sentence)
+
+        print('about to parse the following {} sentences:'.format(len(sentences)))
+        print('\n'.join(sentences))
 
         parsed_sentences = parser.parse_sentences(sentences)
         print(parsed_sentences[0].terminals[0].token_id, parsed_sentences[0].terminals[0].text)
