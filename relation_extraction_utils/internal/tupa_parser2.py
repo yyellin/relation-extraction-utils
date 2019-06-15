@@ -51,7 +51,8 @@ class TupaParser2(object):
                                                                            self._model_prefix, dir_name)
         # cp = subprocess.run(['bash', '-c', command])
         cp = subprocess.run(
-            ['bash', '-c', command],
+            [command],
+            shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             universal_newlines=True)
