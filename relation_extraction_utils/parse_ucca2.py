@@ -65,7 +65,7 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
     parser = TupaParser2(tupa_dir, model_prefix)
 
     count = 0
-    for next_batch in zip_longest(*(csv_reader * 200)):
+    for next_batch in zip_longest(*([csv_reader] * 200)):
 
         sentences = []
         for entry in next_batch:
