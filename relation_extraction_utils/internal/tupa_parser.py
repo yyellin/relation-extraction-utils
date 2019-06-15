@@ -56,12 +56,12 @@ class TupaParser(object):
         # Since 'parse_sentence' calls 'annotate_all' which lazily instantiated a spacey pipeline,
         # and since we want all the initialization to occur in the __init__ method, we simply call
         # 'parse_sentence' with dummy input
-        self.parse_sentence(first_sentence)
+        self.parse_sentence(first_sentence, write=True)
 
         # undo hack side effect
         sys.argv = remember_argv
 
-    def parse_sentence(self, sentence):
+    def parse_sentence(self, sentence, write=False):
 
         TupaParser.__passage_counter =+ 1
         passage_id = TupaParser.__passage_counter =+ 1
@@ -78,7 +78,7 @@ class TupaParser(object):
         # The parse method also returns a generator, hence the need to call next.
         # The actual object returned is a tuple of the parsed-passage and an internal score object. We're
         # not interested in the score though, so we just extract the parsed-passage
-        parsed_passage_and_score = next( self.__parser.parse( [unparsed_passage], evaluate=True, write=True) )
+        parsed_passage_and_score = next( self.__parser.parse( [unparsed_passage], evaluate=True, write=write) )
         internal_parsed_passage = parsed_passage_and_score[0]
         parsed_passage = TupaParser.__get_ucca_parsed_passage_from_passage(internal_parsed_passage)
 
