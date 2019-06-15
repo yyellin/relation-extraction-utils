@@ -36,10 +36,19 @@ class TupaParser(object):
         # without it tupa.parse.Parser will throw exceptions ..
         remember_argv = sys.argv
         sys.argv = ['-m', model_prefix]
-
         parser = Parser(model_files= model_prefix)
-        parser.trained = True
+
         parser.models[0].load()
+        parser.models[0] = parser.models[0].finalize(True)
+        parser.trained = True
+
+
+        ###p = Parser(model_files=model_files, config=Config(), beam=args.beam)
+        ###yield from filter(None,
+        ###                  p.train(train_passages, dev=dev_passages, test=test_passages, iterations=args.iterations))
+        ###unparsed_passage = next( annotate_all( from_text( 'Hello dummy world', 0, one_per_line= True) ) )
+        ###result = list(parser.train( [], dev=[], test=[unparsed_passage] ))
+
 
         self.__parser = parser
 
