@@ -1,5 +1,6 @@
 import sys
 import tempfile
+
 import os
 import subprocess
 
@@ -36,30 +37,31 @@ class TupaParser2(object):
 
         parsed_passages = []
 
-        with tempfile.TemporaryDirectory() as dir_name:
+        #with tempfile.TemporaryDirectory() as dir_name:
+        dir_name = tempfile.mkdtemp()
+        print('creating files in ', dir_name)
 
-            input_paths = []
-            for count, sentence in enumerate(sentences):
-                input_path = '{}/file_{}'.format(dir_name, count)
-                with open(input_path, 'w') as input:
-                    input.write(sentence)
+        input_paths = []
+        for count, sentence in enumerate(sentences):
+            input_path = '{}/file_{}'.format(dir_name, count)
+            with open(input_path, 'w') as input:
+                input.write(sentence)
 
-                input_paths.append(input_path)
-                print('created file', input_path)
+            input_paths.append(input_path)
 
-            command = 'cd {}; python -m tupa {} -m {} -p parsed_ -o {}'.format(self._tupa_utility_path, ' '.join(input_paths), self._model_prefix, dir_name)
-            completed = subprocess.run(['bash', '-c', command])
+        command = 'cd {}; python -m tupa {} -m {} -p parsed_ -o {}'.format(self._tupa_utility_path, ' '.join(input_paths), self._model_prefix, dir_name)
+        completed = subprocess.run(['bash', '-c', command])
 
-            # assuming this all worked ;)
+        # assuming this all worked ;)
 
-            for count, _ in enumerate(sentences):
-                output_file = '{}/parsed_file_{}_0.xml'.format(dir_name, count)
+        for count, _ in enumerate(sentences):
+            output_file = '{}/parsed_file_{}_0.xml'.format(dir_name, count)
 
-                internal_parsed_passage = file2passage(output_file)
-                parsed_passage = TupaParser2.__get_ucca_parsed_passage_from_passage(internal_parsed_passage)
+            internal_parsed_passage = file2passage(output_file)
+            parsed_passage = TupaParser2.__get_ucca_parsed_passage_from_passage(internal_parsed_passage)
 
 
-                parsed_passages.append(parsed_passage)
+            parsed_passages.append(parsed_passage)
 
         return parsed_passages
 
