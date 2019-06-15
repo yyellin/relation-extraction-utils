@@ -46,9 +46,9 @@ class TupaParser2(object):
 
             input_paths.append(input_path)
 
-        command = 'cd {}; python -m tupa \'{}\' -m {} -p parsed_ -o {}'.format(self._tupa_utility_path,
+        command = 'cd {}; python -m tupa {} -m {} -p parsed_ -o {}'.format(self._tupa_utility_path,
                                                                                ' '.join(input_paths),
-                                                                               self._model_prefix, dir_name)
+                                                                           self._model_prefix, dir_name)
         # cp = subprocess.run(['bash', '-c', command])
         cp = subprocess.run(
             ['bash', '-c', command],

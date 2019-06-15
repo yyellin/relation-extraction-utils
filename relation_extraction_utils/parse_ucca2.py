@@ -10,8 +10,8 @@ import argparse
 import csv
 import sys
 from itertools import zip_longest
-import spacy
 
+import spacy
 
 from relation_extraction_utils.internal.detokenizer import Detokenizer
 from relation_extraction_utils.internal.map_csv_column import CsvColumnMapper
@@ -19,8 +19,7 @@ from relation_extraction_utils.internal.mnofc import ManageNewOutputFileCreation
 from relation_extraction_utils.internal.sync_tac_tags import SyncTacTags
 from relation_extraction_utils.internal.tupa_parser2 import TupaParser2
 
-
-TUPA_BATCH_SIZE = 200
+TUPA_BATCH_SIZE = 40
 
 def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_size=None):
     """
@@ -71,7 +70,7 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
 
     count = 0
     for next_batch in zip_longest(*([csv_reader] * TUPA_BATCH_SIZE)):
-
+        print('parsing batch')
         sentences = []
         for entry in next_batch:
 
