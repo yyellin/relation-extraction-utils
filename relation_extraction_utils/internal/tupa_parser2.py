@@ -1,12 +1,10 @@
-import sys
-import tempfile
-import os
 import subprocess
+import tempfile
 
 from ucca.core import Passage
+from ucca.ioutil import file2passage
 from ucca.layer0 import Layer0
 from ucca.layer1 import Layer1
-from ucca.ioutil import file2passage
 
 from relation_extraction_utils.internal.ucca_types import UccaParsedPassage, UccaEdge, UccaNode, UccaTerminalNode
 
@@ -48,8 +46,13 @@ class TupaParser2(object):
                 print('created file', input_path)
 
             command = 'cd {}; python -m tupa {} -m {} -p parsed_ -o {}'.format(self._tupa_utility_path, ' '.join(input_paths), self._model_prefix, dir_name)
-            completed = subprocess.run(['bash', '-c', command])
+            cp = subprocess.run(
+                ['bash', '-c', command],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                universal_newlines=True)
 
+            print(cp.stdout)
             # assuming this all worked ;)
 
             for count, _ in enumerate(sentences):
