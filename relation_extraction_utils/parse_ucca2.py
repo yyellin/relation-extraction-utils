@@ -88,16 +88,16 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
         print('\n'.join(sentences))
 
         parsed_sentences = parser.parse_sentences(sentences)
-        keep_track = 0
+        # keep_track = 0
 
         for sentence, parsed_sentence, entry in zip(sentences, parsed_sentences, entries):
 
-            keep_track += 1
+            # keep_track += 1
 
-            print('processing {}:'.format(keep_track))
-            print('sentence: ', sentence)
-            print('subj_start: ', int(column_mapper.get_field_value_from_source(entry, 'subj_end')))
-            print('first terminal: ', parsed_sentence.terminals[0].text)
+            # print('processing {}:'.format(keep_track))
+            # print('sentence: ', sentence)
+            # print('subj_start: ', int(column_mapper.get_field_value_from_source(entry, 'subj_end')))
+            #print('first terminal: ', parsed_sentence.terminals[0].text)
 
 
             new_file = mnofc.get_new_file_if_necessary()
@@ -116,6 +116,7 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
             spacied = nlp(sentence)
             for token_id, word in enumerate(spacied, start=1):
                 print('inside spacy loop - looking at word: ', word.text)
+                print('inside spacy loop - looking at word: ', word.lemma)
                 lemmas_with_indices.append((token_id, word.lemma))
 
             tac_tokens = eval(column_mapper.get_field_value_from_source(entry, 'tac_tokens'))
