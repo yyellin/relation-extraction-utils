@@ -97,7 +97,7 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
             print('processing {}:'.format(keep_track))
             print('sentence: ', sentence)
             print('subj_start: ', int(column_mapper.get_field_value_from_source(entry, 'subj_end')))
-            print('first terminal: ', parsed_sentence.terminals[0].token_id)
+            print('first terminal: ', parsed_sentence.terminals[0].text)
 
 
             new_file = mnofc.get_new_file_if_necessary()
@@ -124,6 +124,10 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
             tac_tokens_lookup['subj_end'] = int(column_mapper.get_field_value_from_source(entry, 'subj_end'))
             tac_tokens_lookup['obj_start'] = int(column_mapper.get_field_value_from_source(entry, 'obj_start'))
             tac_tokens_lookup['obj_end'] = int(column_mapper.get_field_value_from_source(entry, 'obj_end'))
+
+            print('comparing tokens:')
+            print('tac_tokens: ', ' '.join(tac_tokens))
+            print('tokens: ', ' '.join(tokens))
 
             token_lookup = SyncTacTags.b_lookup_to_a_lookup(tokens, tac_tokens, tac_tokens_lookup)
 
