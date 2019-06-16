@@ -69,6 +69,8 @@ class TupaParser2(object):
             internal_parsed_passage = file2passage(output_file)
             parsed_passage = TupaParser2.__get_ucca_parsed_passage_from_passage(internal_parsed_passage)
 
+            print('from file parsing: ', ' '.join([terminal.text for terminal in parsed_passage.terminals]))
+
 
             parsed_passages.append(parsed_passage)
 
