@@ -70,40 +70,55 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
 
     count = 0
     for next_batch in zip_longest(*([csv_reader] * TUPA_BATCH_SIZE)):
-        print('parsing batch')
-        entries = []
 
+        entries = []
         sentences = []
         for entry in next_batch:
             if entry is None:
                 #we've reached the end of the batch
                 break
+
             entries.append(entry)
 
             tac_tokens = eval(column_mapper.get_field_value_from_source(entry, 'tac_tokens'))
             sentence = detokenizer.detokenize(tac_tokens)
             sentences.append(sentence)
 
-        print('about to parse the following {} sentences:'.format(len(sentences)))
-        print('\n'.join(sentences))
-
+        # send multiple sentnces for parsing (as many as 'TUPA_BATCH_SIZE')
         parsed_sentences = parser.parse_sentences(sentences)
-        # keep_track = 0
+
+        # if the length of parsed_sentences is different to the length of sentences, then
+        # all bets are off - no point in trying to consolidate.
+        # (that's especially true as the situation in which parsed_sentences' lenght will be
+        # different is when the 'python -m tupa' command fails, in which case parsed_sentences will
+        # be empty
+        if len(parsed_sentences) != len(sentences):
+            parsed_sentences = [None] * len(sentences)
 
         for sentence, parsed_sentence, entry in zip(sentences, parsed_sentences, entries):
 
-            # keep_track += 1
-
-            # print('processing {}:'.format(keep_track))
-            # print('sentence: ', sentence)
-            # print('subj_start: ', int(column_mapper.get_field_value_from_source(entry, 'subj_end')))
-            #print('first terminal: ', parsed_sentence.terminals[0].text)
-
+            count += 1
 
             new_file = mnofc.get_new_file_if_necessary()
             if new_file:
                 csv_writer = csv.writer(new_file)
                 csv_writer.writerow(column_mapper.get_new_headers())
+
+            if parsed_sentence is None:
+                csv_writer.writerow(column_mapper.get_new_row_values(entry,
+                                                                     [count,
+                                                                      sentence,
+                                                                      None,
+                                                                      None,
+                                                                      None,
+                                                                      None,
+                                                                      None,
+                                                                      None,
+                                                                      None,
+                                                                      None,
+                                                                      None,
+                                                                      'TUPA did not produce a UCCA parse']))
+                continue
 
             tokens = []
             tokens_with_indices = []
@@ -113,6 +128,7 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
                 tokens.append(ucca_terminal.text)
                 tokens_with_indices.append((ucca_terminal.token_id, ucca_terminal.text))
 
+            # use spacy to get lemmas
             spacied = nlp(sentence)
             for token_id, word in enumerate(spacied, start=1):
                 lemmas_with_indices.append((token_id, word.lemma_))
@@ -165,6 +181,7 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
                                                                   tokens_with_indices,
                                                                   lemmas_with_indices,
                                                                   None]))
+
 
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(

@@ -1,4 +1,5 @@
 import subprocess
+import sys
 import tempfile
 
 from ucca.core import Passage
@@ -34,38 +35,40 @@ class TupaParser2(object):
 
         parsed_passages = []
 
-        #with tempfile.TemporaryDirectory() as dir_name:
-        dir_name = tempfile.mkdtemp()
-        print('creating files in ', dir_name)
+        # the command tempfile.mkdtemp() leaves the directory in place ..
+        # consider replacing with 'with tempfile.TemporaryDirectory() as dir_name',
+        # which will created the directory and then delete it with all it's contents
+        # at the end of the 'with' block
 
-        # input_paths = []
+        dir_name = tempfile.mkdtemp()
+        print("using directory {} for input to and output from 'python -m tupa command'".format(dir_name),
+              file=sys.stderr)
+
         for count, sentence in enumerate(sentences):
             input_path = '{}/file_{}'.format(dir_name, count)
             with open(input_path, 'w') as input:
                 input.write(sentence)
 
-        #    input_paths.append(input_path)
-
         command = 'cd {}; python -m tupa {} -m {} -p parsed_ -o {}'.format(self._tupa_utility_path,
                                                                            dir_name,
                                                                            self._model_prefix, dir_name)
-        # cp = subprocess.run(['bash', '-c', command])
-        cp = subprocess.run(
+        result = subprocess.run(
             [command],
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             universal_newlines=True)
 
-        print('standard error+output:', cp.stdout)
+        if result.returncode != 0:
+            print("commnd '{}' failed ".format(command), file=sys.stderr)
+            print("it\'s output was:\n{}".format(result.stdout), file=sys.stderr)
 
-        # assuming this all worked ;)
+            # return empty list of parsed outputs
+            return []
+
 
         for count, _ in enumerate(sentences):
             output_file = '{}/parsed_file_{}_0.xml'.format(dir_name, count)
-
-            print('attempting to read file from ', output_file)
-
             internal_parsed_passage = file2passage(output_file)
             parsed_passage = TupaParser2.__get_ucca_parsed_passage_from_passage(internal_parsed_passage)
 
