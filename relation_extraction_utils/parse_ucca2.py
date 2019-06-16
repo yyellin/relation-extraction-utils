@@ -109,15 +109,16 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
             tokens_with_indices = []
             lemmas_with_indices = []
 
-
             for ucca_terminal in parsed_sentence.terminals:
                 tokens.append(ucca_terminal.text)
                 tokens_with_indices.append((ucca_terminal.token_id, ucca_terminal.text))
 
             spacied = nlp(sentence)
             for token_id, word in enumerate(spacied, start=1):
+                print('inside spacy loop - looking at word: ', word.text)
                 lemmas_with_indices.append((token_id, word.lemma))
 
+            tac_tokens = eval(column_mapper.get_field_value_from_source(entry, 'tac_tokens'))
 
             tac_tokens_lookup = {}
             tac_tokens_lookup['subj_start'] = int(column_mapper.get_field_value_from_source(entry, 'subj_start'))
@@ -125,9 +126,6 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
             tac_tokens_lookup['obj_start'] = int(column_mapper.get_field_value_from_source(entry, 'obj_start'))
             tac_tokens_lookup['obj_end'] = int(column_mapper.get_field_value_from_source(entry, 'obj_end'))
 
-            print('comparing tokens:')
-            print('tac_tokens: ', ' '.join(tac_tokens))
-            print('tokens: ', ' '.join(tokens))
 
             token_lookup = SyncTacTags.b_lookup_to_a_lookup(tokens, tac_tokens, tac_tokens_lookup)
 
