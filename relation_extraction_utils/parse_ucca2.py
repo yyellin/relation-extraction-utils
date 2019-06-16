@@ -115,9 +115,7 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
 
             spacied = nlp(sentence)
             for token_id, word in enumerate(spacied, start=1):
-                print('inside spacy loop - looking at word: ', word.text)
-                print('inside spacy loop - looking at word: ', word.lemma)
-                lemmas_with_indices.append((token_id, word.lemma))
+                lemmas_with_indices.append((token_id, word.lemma_))
 
             tac_tokens = eval(column_mapper.get_field_value_from_source(entry, 'tac_tokens'))
 
