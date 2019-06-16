@@ -71,14 +71,14 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
     count = 0
     for next_batch in zip_longest(*([csv_reader] * TUPA_BATCH_SIZE)):
         print('parsing batch')
-        entries = list(next_batch)
+        entries = []
 
         sentences = []
-        for entry in entries:
-
+        for entry in next_batch:
             if entry is None:
                 #we've reached the end of the batch
                 break
+            entries.append(entry)
 
             tac_tokens = eval(column_mapper.get_field_value_from_source(entry, 'tac_tokens'))
             sentence = detokenizer.detokenize(tac_tokens)
@@ -88,9 +88,17 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
         print('\n'.join(sentences))
 
         parsed_sentences = parser.parse_sentences(sentences)
-        print(parsed_sentences[0].terminals[0].token_id, parsed_sentences[0].terminals[0].text)
+        keep_track = 0
 
         for sentence, parsed_sentence, entry in zip(sentences, parsed_sentences, entries):
+
+            keep_track += 1
+
+            print('processing {}:'.format(keep_track))
+            print('sentence: ', sentence)
+            print('subj_start: ', int(column_mapper.get_field_value_from_source(entry, 'subj_end')))
+            print('first terminal: ', parsed_sentence.terminals[0].token_id)
+
 
             new_file = mnofc.get_new_file_if_necessary()
             if new_file:
