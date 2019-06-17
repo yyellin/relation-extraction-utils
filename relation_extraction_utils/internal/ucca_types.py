@@ -147,7 +147,7 @@ class UccaParsedPassage(object):
 
         return links
 
-    def get_path_representations(self, steps):
+    def get_path_representations(self, steps, mark_peak=False):
 
         class StringReference(object):
             def __init__(self, string):
@@ -159,11 +159,14 @@ class UccaParsedPassage(object):
         for step in steps:
 
             # we ave flipped direction from up to down
-            if previous_direction == '!' and step.dep_direction == '^':
+            if mark_peak and previous_direction == '!' and step.dep_direction == '^':
                 peak = self.get_ucca_node_by_node_id(step.me)
 
+                # using '0' to indicate edges in of the root
+                peak_edges_in = peak.edge_tags_in if len(peak.edge_tags_in) > 0 else ['0']
+
                 new_in_progress_list = []
-                for edge_tag_in in peak.edge_tags_in:
+                for edge_tag_in in peak_edges_in:
                     for in_progress in in_progress_list:
                         in_progress.string += '{} '.format(edge_tag_in)
                         new_in_progress_list.append(in_progress)
@@ -174,7 +177,7 @@ class UccaParsedPassage(object):
 
             previous_direction = step.dep_direction
 
-        # return represntations making sure to remove last whitespace
+        # return representations making sure to remove last whitespace
         return [path_representation.string[:-1] for path_representation in in_progress_list]
 
 

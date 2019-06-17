@@ -19,9 +19,8 @@ from relation_extraction_utils.internal.mnofc import ManageNewOutputFileCreation
 from relation_extraction_utils.internal.sync_tac_tags import SyncTacTags
 from relation_extraction_utils.internal.tupa_parser2 import TupaParser2
 
-TUPA_BATCH_SIZE = 200
 
-def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_size=None):
+def parse_ucca(tupa_dir, model_prefix, tupa_batch_size, input_file=None, output_file=None, batch_size=None):
     """
 
      Parameters
@@ -69,7 +68,7 @@ def parse_ucca(tupa_dir, model_prefix, input_file=None, output_file=None, batch_
     nlp = spacy.load('en_core_web_md')
 
     count = 0
-    for next_batch in zip_longest(*([csv_reader] * TUPA_BATCH_SIZE)):
+    for next_batch in zip_longest(*([csv_reader] * tupa_batch_size)):
 
         entries = []
         sentences = []
@@ -225,6 +224,16 @@ if __name__ == "__main__":
         type=int,
         help="it's possible to generate the output file in batches (will be ignored if input is being written to standard output)")
 
+    arg_parser.add_argument(
+        '--tupa-batch-size',
+        metavar='tupa batch size',
+        nargs='?',
+        default=200,
+        type=int,
+        help="defines how many sentences to be sent to tupa command line utility as a batch")
+
+
     args = arg_parser.parse_args()
 
-    parse_ucca(args.tupa, args.model, input_file=args.input, output_file=args.output, batch_size=args.batch_size)
+    parse_ucca(args.tupa, args.model, args.tupa_batch_size, input_file=args.input, output_file=args.output,
+               batch_size=args.batch_size, )
