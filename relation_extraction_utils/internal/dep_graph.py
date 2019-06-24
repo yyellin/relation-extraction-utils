@@ -12,6 +12,25 @@ class Step(namedtuple('Step', 'me, next, dep_direction, dependency')):
     will be indicated with the '↓' symbol
     """
 
+    @staticmethod
+    def get_default_representation(steps):
+        """
+        'get_default_representation' will take a list of Step objects and return
+        a default representation for them
+
+        Parameters
+        ----------
+        steps :
+            list of 'step' objects
+
+        Returns
+        -------
+            string representation of step objects
+
+        """
+
+        return ' '.join(['{0}{1}'.format(step.dep_direction, step.dependency) for step in steps])
+
 
 class DepGraph(object):
     """
@@ -103,14 +122,14 @@ class DepGraph(object):
 
             if DepGraph.Edge(me, next) in self.__edge_to_deptype:
                 edge = DepGraph.Edge(me, next)
-                direction = '!'  # ''↓'
+                direction = '^'  # '↑'
             else:
                 # If the edge represented by (this, next) does not exist in the
                 # '__edge_to_deptype' map, it means that the actual edge in the
                 # dependency parse is from next to this, where this is the parent.
                 # Thus we switch the order ...
                 edge = DepGraph.Edge(next, me)
-                direction = '^'  #'↑'
+                direction = '!'  # ''↓'
 
             dependency = self.__edge_to_deptype[edge]
 

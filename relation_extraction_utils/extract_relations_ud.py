@@ -2,15 +2,13 @@ import argparse
 import csv
 import sys
 
-from relation_extraction_utils.internal.dep_graph import DepGraph
+from relation_extraction_utils.internal.dep_graph import Step, DepGraph
 from relation_extraction_utils.internal.link import Link
 from relation_extraction_utils.internal.map_csv_column import CsvColumnMapper
-from relation_extraction_utils.internal.path_stats import PathStats
 from relation_extraction_utils.internal.ud_types import UdRepresentationPlaceholder
 
 
-def identify_relations(input, output, triggers, paths, entity_types=None):
-
+def extract_relations_ud(input, output, triggers, paths, entity_types=None):
     csv_reader = csv.reader(input)
     csv_writer = csv.writer(output)
 
@@ -65,7 +63,7 @@ def identify_relations(input, output, triggers, paths, entity_types=None):
                 continue
 
             if ent2_head in ner_tags and ner_tags[ent2_head] != entity_types[1]:
-                #print('amazing (2)!!')
+                # print('amazing (2)!!')
                 continue
 
         for link in links:
@@ -80,8 +78,10 @@ def identify_relations(input, output, triggers, paths, entity_types=None):
 
             if word in triggers or lemma in triggers:
 
-                trigger_to_ent2 = PathStats.get_steps_as_string(graph.get_steps(trigger_index, ent2_head), pss_tags)
-                ent1_to_trigger = PathStats.get_steps_as_string(graph.get_steps(ent1_head, trigger_index), pss_tags)
+                # trigger_to_ent2 = PathStats.get_steps_as_string(graph.get_steps(trigger_index, ent2_head), pss_tags)
+                # ent1_to_trigger = PathStats.get_steps_as_string(graph.get_steps(ent1_head, trigger_index), pss_tags)
+                trigger_to_ent2 = Step.get_default_representation(graph.get_steps(trigger_index, ent2_head))
+                ent1_to_trigger = Step.get_default_representation(graph.get_steps(ent1_head, trigger_index))
                 ent1_to_ent2_via_trigger = '{0} >< {1}'.format(ent1_to_trigger, trigger_to_ent2)
 
                 if ent1_to_ent2_via_trigger in paths:
@@ -100,12 +100,10 @@ def identify_relations(input, output, triggers, paths, entity_types=None):
     output.close()
 
 
-
-
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(
         prog='extract_relations',
-        description="identify relationships that match given paths and trigger words")
+        description="identify relationships that match given UD paths and trigger words")
 
     arg_parser.add_argument(
         'paths',
@@ -136,8 +134,7 @@ if __name__ == "__main__":
         '--output',
         action='store',
         metavar='output-file',
-        help='The comma-separated field output file')
-
+        help='The comma-separated field output file (if not provided output will be sent to std output)')
 
     args = arg_parser.parse_args()
 
@@ -146,8 +143,4 @@ if __name__ == "__main__":
     triggers = set([line.rstrip('\n') for line in open(args.triggers)])
     paths = set([line.rstrip('\n') for line in open(args.paths)])
 
-    identify_relations(input, output, triggers, paths, args.entity_types)
-
-#
-#    input_rows = pd.read_csv(sys.stdin if input_file is None else input_file)
-#    input_rows.dropna(subset=['ud_parse'], inplace=True)
+    extract_relations_ud(input, output, triggers, paths, args.entity_types)

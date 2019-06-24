@@ -67,7 +67,7 @@ def parse_ucca(tupa_dir, model_prefix, tupa_batch_size, input_file=None, output_
     parser = TupaParser2(tupa_dir, model_prefix)
     nlp = spacy.load('en_core_web_md')
 
-    count = 0
+    count = -1
     for next_batch in zip_longest(*([csv_reader] * tupa_batch_size)):
 
         entries = []
