@@ -9,7 +9,7 @@ from relation_extraction_utils.internal.map_csv_column import CsvColumnMapper
 from relation_extraction_utils.internal.ucca_types import UccaParsedPassage
 
 
-def extract_relations_ucca(input, output, triggers, paths, entity_types=None):
+def extract_relations_ucca(input, output, triggers, paths, include_miss=False, entity_types=None):
     csv_reader = csv.reader(input)
     csv_writer = csv.writer(output)
 
@@ -27,13 +27,15 @@ def extract_relations_ucca(input, output, triggers, paths, entity_types=None):
 
         ucca_parse_serialization = column_mapper.get_field_value_from_source(entry, 'ucca_parse')
         if ucca_parse_serialization is None or ucca_parse_serialization == "":
-            csv_writer.writerow(column_mapper.get_new_row_values(entry, [None, None, None, 'ucca_parse missing']))
+            if include_miss:
+                csv_writer.writerow(column_mapper.get_new_row_values(entry, [None, None, None, 'ucca_parse missing']))
             continue
 
         ucca_parse = UccaParsedPassage.from_serialization(ucca_parse_serialization)
         if ucca_parse is None:
-            csv_writer.writerow(
-                column_mapper.get_new_row_values(entry, [None, None, None, 'unable to serialize UCCA object']))
+            if include_miss:
+                csv_writer.writerow(
+                    column_mapper.get_new_row_values(entry, [None, None, None, 'unable to serialize UCCA object']))
             continue
         links = ucca_parse.get_links()
 
@@ -41,21 +43,26 @@ def extract_relations_ucca(input, output, triggers, paths, entity_types=None):
         ent2_start_token_id = column_mapper.get_field_value_from_source(entry, 'ent2_start', as_int=True)
 
         if ent1_start_token_id is None or ent2_start_token_id is None:
-            csv_writer.writerow(column_mapper.get_new_row_values(entry, [None, None, None, 'indices missing']))
+            if include_miss:
+                csv_writer.writerow(column_mapper.get_new_row_values(entry, [None, None, None, 'indices missing']))
             continue
 
         ent1_start_node_id = ucca_parse.get_node_id_by_token_id(ent1_start_token_id)
         ent1_parent_node_ids = Link.get_parents(links, ent1_start_node_id)
         if len(ent1_parent_node_ids) == 0:
-            csv_writer.writerow(
-                column_mapper.get_new_row_values(entry, [None, None, None, 'Could not find parent of ent1']))
+            if include_miss:
+                csv_writer.writerow(
+                    column_mapper.get_new_row_values(entry, [None, None, None, 'Could not find parent of ent1']))
+            continue
         ent1_parent_node_id = ent1_parent_node_ids[0]
 
         ent2_start_node_id = ucca_parse.get_node_id_by_token_id(ent2_start_token_id)
         ent2_parent_node_ids = Link.get_parents(links, ent2_start_node_id)
         if len(ent2_parent_node_ids) == 0:
-            csv_writer.writerow(
-                column_mapper.get_new_row_values(entry, [None, None, None, 'Could not find parent of ent2']))
+            if include_miss:
+                csv_writer.writerow(
+                    column_mapper.get_new_row_values(entry, [None, None, None, 'Could not find parent of ent2']))
+            continue
         ent2_parent_node_id = ent2_parent_node_ids[0]
 
         graph = DepGraph(links)
@@ -103,14 +110,15 @@ def extract_relations_ucca(input, output, triggers, paths, entity_types=None):
                     break
 
         if not found_relation:
-            comment = 'relation not found - considered the following matching triggers: {}' \
-                .format(' '.join(trigger_word_matches))
+            if include_miss:
+                comment = 'relation not found - considered the following matching triggers: {}' \
+                    .format(' '.join(trigger_word_matches))
 
-            csv_writer.writerow(
-                column_mapper.get_new_row_values(entry, [None,
-                                                         None,
-                                                         None,
-                                                         comment]))
+                csv_writer.writerow(
+                    column_mapper.get_new_row_values(entry, [None,
+                                                             None,
+                                                             None,
+                                                             comment]))
 
     output.close()
 
@@ -133,11 +141,10 @@ if __name__ == "__main__":
         help='File containing list of trigger words (each trigger word on separate line)')
 
     arg_parser.add_argument(
-        '--entity-types',
-        nargs=2,
-        metavar=('entity1-type', 'entity2-type'),
-        help='When used this flag should be followed by two named entity types. When provided, the relation identification '
-             'algorithm will filter out relations that are marked differently (unmarked relations will not be filtered out)')
+        '--include_miss',
+        action='store_true',
+        help='This flag will instruct the script to create an entry in the output for input entries for which '
+             'a relation was not identified')
 
     arg_parser.add_argument(
         '--input',
@@ -158,4 +165,4 @@ if __name__ == "__main__":
     triggers = set([line.rstrip('\n') for line in open(args.triggers)])
     paths = set([line.rstrip('\n') for line in open(args.paths)])
 
-    extract_relations_ucca(input, output, triggers, paths)
+    extract_relations_ucca(input, output, triggers, paths, args.include_miss)
