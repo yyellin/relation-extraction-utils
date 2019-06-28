@@ -122,7 +122,7 @@ def parse_pss(port, model_path, input_file=None, output_file=None, batch_size=No
 if __name__ == "__main__":
 
     arg_parser = argparse.ArgumentParser(
-        prog='parse_pss',
+        prog='append_pss',
         description='for each sentence represented by an entry in the comma-separated value input '
                     'add information pertaining to PSS . '
                     'Each entry will be supplemented with additional column '

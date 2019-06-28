@@ -101,7 +101,7 @@ def parse_ner(input_file=None, output_file=None, batch_size=None):
 
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(
-        prog='parse_ner',
+        prog='append_ner',
         description='for each sentence represented by an entry in the comma-separated value input '
                     'add information pertaining to NER . '
                     'Each entry will be supplemented with additional column '
