@@ -30,7 +30,7 @@ def parse_ner(input_file=None, output_file=None, batch_size=None):
     csv_reader = csv.reader(input)
 
     column_mapper = CsvColumnMapper(next(csv_reader), ['ner'],
-                                    source_required=['sentence', 'ud_parse', 'words'])
+                                    source_required=['sentence', 'words'])
 
     batch = 0
     output = None
