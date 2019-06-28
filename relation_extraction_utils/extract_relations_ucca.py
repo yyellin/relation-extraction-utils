@@ -25,8 +25,6 @@ def extract_relations_ucca(input, output, triggers, paths, entity_types=None):
 
     for counter, entry in enumerate(csv_reader, start=1):
 
-        sentence_id = column_mapper.get_field_value_from_source(entry, 'id', as_int=True)
-
         ucca_parse_serialization = column_mapper.get_field_value_from_source(entry, 'ucca_parse')
         if ucca_parse_serialization is None or ucca_parse_serialization == "":
             csv_writer.writerow(column_mapper.get_new_row_values(entry, [None, None, None, 'ucca_parse missing']))

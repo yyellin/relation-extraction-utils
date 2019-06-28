@@ -15,10 +15,10 @@ setup(
     scripts=[
         'bin/tac_to_csv',
         'bin/parse_ud',
-        'bin/parse_ner',
-        'bin/parse_pss',
         'bin/parse_ucca',
         'bin/parse_ucca2',
+        'bin/append_ner',
+        'bin/append_pss',
         'bin/extract_relations_ud',
         'bin/extract_relations_ucca',
         'bin/extract_relations_ud_plus_ucca'
