@@ -187,28 +187,34 @@ class UccaParsedPassage(object):
 
         self = UccaParsedPassage()
 
-        representation = eval(serialization)
-
         self.terminals = []
         self.non_terminals = []
         self.edges = []
 
-        for element in representation['terminals']:
-            terminal = UccaTerminalNode(element[0], ['Terminal'], element[1], element[2], element[3])
-            self.terminals.append(terminal)
+        try:
+            representation = eval(serialization)
 
-        for element in representation['non_terminals']:
-            non_terminal = UccaNode(element[0], element[1])
-            self.non_terminals.append(non_terminal)
+            for element in representation['terminals']:
+                terminal = UccaTerminalNode(element[0], ['Terminal'], element[1], element[2], element[3])
+                self.terminals.append(terminal)
 
-        for element in representation['edges']:
-            child_id = element[0]
-            parent_id = element[1]
-            edge_tag = element[2]
+            for element in representation['non_terminals']:
+                non_terminal = UccaNode(element[0], element[1])
+                self.non_terminals.append(non_terminal)
 
-            child = next(node for node in chain(self.non_terminals, self.terminals) if node.node_id == child_id)
-            parent = next(node for node in chain(self.non_terminals, self.terminals) if node.node_id == parent_id)
+            for element in representation['edges']:
+                child_id = element[0]
+                parent_id = element[1]
+                edge_tag = element[2]
 
-            self.edges.append(UccaEdge(child, parent, edge_tag))
+                child = next(node for node in chain(self.non_terminals, self.terminals) if node.node_id == child_id)
+                parent = next(node for node in chain(self.non_terminals, self.terminals) if node.node_id == parent_id)
+
+                self.edges.append(UccaEdge(child, parent, edge_tag))
+
+        except:
+            return None
+
+
 
         return self

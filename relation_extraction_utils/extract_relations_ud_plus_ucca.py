@@ -24,6 +24,9 @@ def __extract_relation_ucca(ucca_entry, ucca_paths, ucca_column_mapper, triggers
         return None
 
     ucca_parse = UccaParsedPassage.from_serialization(ucca_parse_serialization)
+    if ucca_parse is None:
+        return None
+
     links = ucca_parse.get_links()
 
     ent1_start_token_id = ucca_column_mapper.get_field_value_from_source(ucca_entry, 'ent1_start', as_int=True)
@@ -105,10 +108,6 @@ def __extract_relation_ud(ud_entry, ud_paths, ud_column_mapper, triggers):
 
     for trigger_index, (word, lemma) in enumerate(zip(words, lemmas), start=1):
 
-        # For some reason we're seeing words with apostrophe s sometimes being parsed into 3 tokens: (1) word itself;
-        # (2) the ' sign; (3) 's.
-        # The problem is that the lemma of the second token is for some reason 's
-
         if word in triggers or lemma in triggers:
 
             trigger_to_ent2 = Step.get_default_representation(graph.get_steps(trigger_index, ent2_head))
@@ -133,7 +132,7 @@ def extract_relations(output, ud_input, ud_paths, ucca_input, ucca_paths, trigge
             ud_path='',
             ucca_trigger='',
             ucca_path='',
-            comment=''):
+            extraction_comment=''):
 
         return [id,
                 sentence,
@@ -147,7 +146,7 @@ def extract_relations(output, ud_input, ud_paths, ucca_input, ucca_paths, trigge
                 ud_path,
                 ucca_trigger,
                 ucca_path,
-                comment]
+                extraction_comment]
 
     csv_writer = csv.writer(output)
 
@@ -164,7 +163,7 @@ def extract_relations(output, ud_input, ud_paths, ucca_input, ucca_paths, trigge
         'ud_path',
         'ucca_trigger',
         'ucca_path',
-        'comment'])
+        'extraction_comment'])
 
     ud_reader = csv.reader(ud_input)
     ucca_reader = csv.reader(ucca_input)
@@ -191,7 +190,7 @@ def extract_relations(output, ud_input, ud_paths, ucca_input, ucca_paths, trigge
 
         ucca_row = ucca_entry_lookup.get(id)
         if ucca_row is None:
-            csv_writer.writerow(get_output_entry_list(id, sentence, comment='No matching UCCA row'))
+            csv_writer.writerow(get_output_entry_list(id, sentence, extraction_comment='No matching UCCA row'))
             continue
 
         ud_words = ud_column_mapper.get_field_value_from_source(ud_row, 'words')
@@ -223,24 +222,11 @@ def extract_relations(output, ud_input, ud_paths, ucca_input, ucca_paths, trigge
                                   ucca_path=ucca_path
                                   ))
 
-        # if ud_match is not None and ucca_match is None:
-        #     print('Sentence {} only matched in UD'.format(id))
-        #     print('Trigger: {}'.format(ud_match.trigger))
-        #     print('UD Path: {}'.format(ud_match.path))
-        #     print('\t{}'.format(ud_column_mapper.get_field_value_from_source(ud_row, 'sentence')))
-        #     print()
-        #
-        # elif ud_match is None and ucca_match is not None:
-        #     print('Sentence {} only matched in UCCA'.format(id))
-        #     print('\tTrigger: {}'.format(ucca_match.trigger))
-        #     print('\tUD Path: {}'.format(ucca_match.path))
-        #     print('\tSentence: {}'.format(ud_column_mapper.get_field_value_from_source(ud_row, 'sentence')))
-        #     print()
 
 
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(
-        prog='compare_ud_ucca_extraction',
+        prog='extract_relations_ud_plus_ucca',
         description="analyzes differences between UD and UCCA relation extraction success")
 
     arg_parser.add_argument(

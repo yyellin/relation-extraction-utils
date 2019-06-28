@@ -1,0 +1,4 @@
+#!/bin/bash
+
+python -m relation_extraction_utils.extract_relations_ud "$@"
+

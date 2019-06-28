@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='relation_extraction_utils',
-    version='0.1.0',
+    version='0.2.0',
     packages=['relation_extraction_utils', 'relation_extraction_utils.internal'],
     url='https://github.com/comp-aspects-of-appl-linguistics/relation_extraction_utils',
     license='GPLv3',
@@ -19,5 +19,8 @@ setup(
         'bin/parse_pss',
         'bin/parse_ucca',
         'bin/parse_ucca2',
-        'bin/extract_relations']
+        'bin/extract_relations_ud',
+        'bin/extract_relations_ucca',
+        'bin/extract_relations_ud_plus_ucca'
+    ]
 )

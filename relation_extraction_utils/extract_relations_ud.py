@@ -17,7 +17,7 @@ def extract_relations_ud(input, output, triggers, paths, entity_types=None):
     if entity_types is not None:
         required_columns.append('ner')
 
-    column_mapper = CsvColumnMapper(next(csv_reader), ['trigger', 'trigger_idx', 'matched-lemma', 'path'],
+    column_mapper = CsvColumnMapper(next(csv_reader), ['trigger', 'trigger_idx', 'path', 'extraction_comment'],
                                     source_required=required_columns)
 
     csv_writer.writerow(column_mapper.get_new_headers())
@@ -32,6 +32,10 @@ def extract_relations_ud(input, output, triggers, paths, entity_types=None):
 
         lemma_indices = column_mapper.get_field_value_from_source(entry, 'lemmas', evaluate=True)
         lemmas = [lemma for _, lemma in lemma_indices]
+
+        word_indices = column_mapper.get_field_value_from_source(entry, 'words', evaluate=True)
+        words = [word for _, word in word_indices]
+
 
         ent1_start = column_mapper.get_field_value_from_source(entry, 'ent1_start', as_int=True)
         ent1_end = column_mapper.get_field_value_from_source(entry, 'ent1_end', as_int=True)
@@ -50,10 +54,6 @@ def extract_relations_ud(input, output, triggers, paths, entity_types=None):
 
         graph = DepGraph(links)
 
-        # pss_index_lookup = {tuple[0]: tuple[1] for tuple in eval(row.pss_index_lookup)}
-        # pss_positive_lookup = eval(row.pss_parse)
-        # pss_tags = SyncPssTags.get_pss_tags_by_index(index_lookup, pss_index_lookup, pss_positive_lookup)
-        pss_tags = None  # SyncPssTags.get_pss_tags_by_index(row)
 
         if entity_types is not None:
             ner_tags = column_mapper.get_field_value_from_source(entry, 'ner', evaluate=True)
@@ -66,35 +66,18 @@ def extract_relations_ud(input, output, triggers, paths, entity_types=None):
                 # print('amazing (2)!!')
                 continue
 
-        for link in links:
-
-            trigger_index = link.word_index
-            word = link.word
-            lemma = lemmas[trigger_index - 1]
-
-            # For some reason we're seeing words with apostrophe s sometimes being parsed into 3 tokens: (1) word itself;
-            # (2) the ' sign; (3) 's.
-            # The problem is that the lemma of the second token is for some reason 's
+        for trigger_index, (word, lemma) in enumerate(zip(words, lemmas), start=1):
 
             if word in triggers or lemma in triggers:
 
-                # trigger_to_ent2 = PathStats.get_steps_as_string(graph.get_steps(trigger_index, ent2_head), pss_tags)
-                # ent1_to_trigger = PathStats.get_steps_as_string(graph.get_steps(ent1_head, trigger_index), pss_tags)
                 trigger_to_ent2 = Step.get_default_representation(graph.get_steps(trigger_index, ent2_head))
                 ent1_to_trigger = Step.get_default_representation(graph.get_steps(ent1_head, trigger_index))
                 ent1_to_ent2_via_trigger = '{0} >< {1}'.format(ent1_to_trigger, trigger_to_ent2)
 
                 if ent1_to_ent2_via_trigger in paths:
-
-                    if word in triggers:
-                        trigger = word
-                        matched_lemma = False
-                    else:
-                        trigger = lemma
-                        matched_lemma = True
-
-                    csv_writer.writerow(column_mapper.get_new_row_values(entry, [trigger, trigger_index, matched_lemma,
-                                                                                 ent1_to_ent2_via_trigger]))
+                    trigger = word if word in triggers else lemma
+                    csv_writer.writerow(column_mapper.get_new_row_values(entry, [trigger, trigger_index,
+                                                                                 ent1_to_ent2_via_trigger, None]))
                     break
 
     output.close()
@@ -102,7 +85,7 @@ def extract_relations_ud(input, output, triggers, paths, entity_types=None):
 
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(
-        prog='extract_relations',
+        prog='extract_relations_ud',
         description="identify relationships that match given UD paths and trigger words")
 
     arg_parser.add_argument(

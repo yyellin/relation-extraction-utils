@@ -18,7 +18,7 @@ def extract_relations_ucca(input, output, triggers, paths, entity_types=None):
     if entity_types is not None:
         required_columns.append('ner')
 
-    column_mapper = CsvColumnMapper(next(csv_reader), ['trigger', 'trigger_idx', 'matched-lemma', 'path'],
+    column_mapper = CsvColumnMapper(next(csv_reader), ['trigger', 'trigger_idx', 'path', 'extraction_comment'],
                                     source_required=required_columns)
 
     csv_writer.writerow(column_mapper.get_new_headers())
@@ -29,35 +29,35 @@ def extract_relations_ucca(input, output, triggers, paths, entity_types=None):
 
         ucca_parse_serialization = column_mapper.get_field_value_from_source(entry, 'ucca_parse')
         if ucca_parse_serialization is None or ucca_parse_serialization == "":
-            csv_writer.writerow(column_mapper.get_new_row_values(entry, [None, None, 'ucca_parse missing']))
-            print('skip')
+            csv_writer.writerow(column_mapper.get_new_row_values(entry, [None, None, None, 'ucca_parse missing']))
             continue
 
         ucca_parse = UccaParsedPassage.from_serialization(ucca_parse_serialization)
+        if ucca_parse is None:
+            csv_writer.writerow(
+                column_mapper.get_new_row_values(entry, [None, None, None, 'unable to serialize UCCA object']))
+            continue
         links = ucca_parse.get_links()
 
         ent1_start_token_id = column_mapper.get_field_value_from_source(entry, 'ent1_start', as_int=True)
         ent2_start_token_id = column_mapper.get_field_value_from_source(entry, 'ent2_start', as_int=True)
 
         if ent1_start_token_id is None or ent2_start_token_id is None:
-            csv_writer.writerow(column_mapper.get_new_row_values(entry, [None, None, 'indices missing']))
-            print('skip')
+            csv_writer.writerow(column_mapper.get_new_row_values(entry, [None, None, None, 'indices missing']))
             continue
 
         ent1_start_node_id = ucca_parse.get_node_id_by_token_id(ent1_start_token_id)
         ent1_parent_node_ids = Link.get_parents(links, ent1_start_node_id)
         if len(ent1_parent_node_ids) == 0:
-            csv_writer.writerow(column_mapper.get_new_row_values(entry, [None, None, 'Could not find parent of ent1']))
-            print('skip')
-            continue
+            csv_writer.writerow(
+                column_mapper.get_new_row_values(entry, [None, None, None, 'Could not find parent of ent1']))
         ent1_parent_node_id = ent1_parent_node_ids[0]
 
         ent2_start_node_id = ucca_parse.get_node_id_by_token_id(ent2_start_token_id)
         ent2_parent_node_ids = Link.get_parents(links, ent2_start_node_id)
         if len(ent2_parent_node_ids) == 0:
-            csv_writer.writerow(column_mapper.get_new_row_values(entry, [None, None, 'Could not find parent of ent2']))
-            print('skip')
-            continue
+            csv_writer.writerow(
+                column_mapper.get_new_row_values(entry, [None, None, None, 'Could not find parent of ent2']))
         ent2_parent_node_id = ent2_parent_node_ids[0]
 
         graph = DepGraph(links)
@@ -68,20 +68,15 @@ def extract_relations_ucca(input, output, triggers, paths, entity_types=None):
         words_with_indices = column_mapper.get_field_value_from_source(entry, 'words', evaluate=True)
         words = [word for _, word in words_with_indices]
 
-        found_trigger = False
+        found_relation = False
+        trigger_word_matches = []
 
         for trigger_index, (word, lemma) in enumerate(zip(words, lemmas), start=1):
 
-            if sentence_id == 7 and trigger_index == 13:
-                print('wait here')
-
-            # For some reason we're seeing words with apostrophe s sometimes being parsed into 3 tokens: (1) word itself;
-            # (2) the ' sign; (3) 's.
-            # The problem is that the lemma of the second token is for some reason 's
-
             if word in triggers or lemma in triggers:
 
-                found_trigger = True
+                trigger_word_matches.append(word)
+
                 trigger_node_id = ucca_parse.get_node_id_by_token_id(trigger_index)
                 trigger_parent_node_id = Link.get_parents(links, trigger_node_id)[0]
 
@@ -92,37 +87,39 @@ def extract_relations_ucca(input, output, triggers, paths, entity_types=None):
                 trigger_to_ent2_strings = ucca_parse.get_path_representations(trigger_to_ent2_steps)
 
                 for segment1, segment2 in product(ent1_to_trigger_strings, trigger_to_ent2_strings):
-
                     ent1_to_ent2_via_trigger = '{0} >< {1}'.format(segment1, segment2)
 
                     if ent1_to_ent2_via_trigger in paths:
-
-                        if word in triggers:
-                            trigger = word
-                            matched_lemma = False
-                        else:
-                            trigger = lemma
-                            matched_lemma = True
+                        found_relation = True
+                        trigger = word if word in triggers else lemma
 
                         csv_writer.writerow(
-                            column_mapper.get_new_row_values(entry, [trigger, trigger_index, matched_lemma,
-                                                                     ent1_to_ent2_via_trigger]))
+                            column_mapper.get_new_row_values(entry, [trigger,
+                                                                     trigger_index,
+                                                                     ent1_to_ent2_via_trigger,
+                                                                     None]))
                         break
 
-                    # else:
-                    #     print('Sentence {}, bad path: {}'.format(sentence_id, ent1_to_ent2_via_trigger))
-                    #     print( column_mapper.get_field_value_from_source(entry, 'sentence' ) )
-                    #     print()
+                if found_relation:
+                    # no point to continue looking for other trigger words, as we've found a relation
+                    break
 
-        if not found_trigger:
-            print('no trigger found')
+        if not found_relation:
+            comment = 'relation not found - considered the following matching triggers: {}' \
+                .format(' '.join(trigger_word_matches))
+
+            csv_writer.writerow(
+                column_mapper.get_new_row_values(entry, [None,
+                                                         None,
+                                                         None,
+                                                         comment]))
 
     output.close()
 
 
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(
-        prog='extract_relations',
+        prog='extract_relations_ucca',
         description="identify relationships that match given UCCA paths and trigger words")
 
     arg_parser.add_argument(
