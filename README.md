@@ -1,6 +1,48 @@
-# relation-extraction-utils: Utility packages for relation extraction
+# relation-extraction-utils: Syntactic *and* semantic based patterns for relation extraction with supporting software
 
-The relation-extraction-utils project is an assembly of Python 3 packages used by Or, Shachar and Jonathan in support of their graduate work in the field of rules based systems for relation extraction.
+## Introduction
+
+The relation-extraction-utils project contains an assembly of Python 3 packages used by Or, Shachar and Jonathan in support of their graduate lab work in the field of rules based systems for relation extraction.
+
+The aim of the lab is to assess whether it is possible to improve on the results of traditional pattern based approaches for identifying relations between two entities by considering patterns that stem from semantical structure of sentences, as expressed by UCCA 
+
+[]: http://www.cs.huji.ac.il/~oabend/ucca.html	"The UCCA Resource Webpage"
+
+We relied on the TAC Relation Extraction Dataset 
+
+[]: https://catalog.ldc.upenn.edu/LDC2018T24	"TAC Relation Extraction Dataset"
+
+ as our input. This dataset contains a total of 106,264 entries each representing a single sentences. Each entry contains identification of two entities and their TAC KBP relation, or no relation at all. Additionally, each entry contains Standford NLP based parts-of-speech tagging, NER tagging and dependency tree, however we did not utilize this data. The sentences are divided into sets of Train, Dev and Test.  
+
+For the purpose of our study, we focused on the 'org:founded_by' relationship - with 124 appearances in the Train set and 76 appearances in the Dev set. 
+
+## Method
+
+We focus on relations that arise from individual sentences, and assume that a reader's ability to infer the existence of a relationship between two entities is generally contingent on the existence of  "trigger word".  We designed and implemented a software based *pipeline* for both pattern extraction and pattern application, with the former requiring minimal human intervention, and the latter requiring no human intervention at all. 
+
+The patterns themselves are based on the concept of a *path* between tokens in the sentence; specifically: a pattern consists of an expression of the path between the first entity and the trigger word, and then from the trigger word to the second entity. 
+
+The heart of this project is in the benefit of the leveraging of two sentence parsing paradigms in order to express the path between tokens:
+
+1. Universal Dependencies v2 
+
+   []: https://en.wikipedia.org/wiki/Universal_Dependencies
+
+   whatever
+
+2. 
+
+The pipeline process is repeated for two classes of sentence structure: for 
+
+
+
+### Pattern Extraction
+
+P
+
+![](C:\Users\jyellin\Desktop\Relation-Extraction.png)
+
+
 
 
 
