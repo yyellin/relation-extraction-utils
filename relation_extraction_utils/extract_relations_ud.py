@@ -8,14 +8,11 @@ from relation_extraction_utils.internal.map_csv_column import CsvColumnMapper
 from relation_extraction_utils.internal.ud_types import UdRepresentationPlaceholder
 
 
-def extract_relations_ud(input, output, triggers, paths, include_miss=False, entity_types=None):
+def extract_relations_ud(input, output, triggers, paths, include_miss=False):
     csv_reader = csv.reader(input)
     csv_writer = csv.writer(output)
 
     required_columns = ['sentence', 'ud_parse', 'lemmas', 'ent1_start', 'ent1_end', 'ent2_start', 'ent2_end']
-
-    if entity_types is not None:
-        required_columns.append('ner')
 
     column_mapper = CsvColumnMapper(next(csv_reader), ['trigger', 'trigger_idx', 'path', 'extraction_comment'],
                                     source_required=required_columns)
@@ -60,17 +57,6 @@ def extract_relations_ud(input, output, triggers, paths, include_miss=False, ent
         ent2_head = Link.get_head(links, ent2_indexes)
 
         graph = DepGraph(links)
-
-        if entity_types is not None:
-            ner_tags = column_mapper.get_field_value_from_source(entry, 'ner', evaluate=True)
-
-            if ent1_head in ner_tags and ner_tags[ent1_head] != entity_types[0]:
-                # print('amazing (1)!!')
-                continue
-
-            if ent2_head in ner_tags and ner_tags[ent2_head] != entity_types[1]:
-                # print('amazing (2)!!')
-                continue
 
         found_relation = False
         trigger_word_matches = []
@@ -133,13 +119,6 @@ if __name__ == "__main__":
              'a relation was not identified')
 
     arg_parser.add_argument(
-        '--entity-types',
-        nargs=2,
-        metavar=('entity1-type', 'entity2-type'),
-        help='When used this flag should be followed by two named entity types. When provided, the relation identification '
-             'algorithm will filter out relations that are marked differently (unmarked relations will not be filtered out)')
-
-    arg_parser.add_argument(
         '--input',
         action='store',
         metavar='input-file',
@@ -158,4 +137,4 @@ if __name__ == "__main__":
     triggers = set([line.rstrip('\n') for line in open(args.triggers)])
     paths = set([line.rstrip('\n') for line in open(args.paths)])
 
-    extract_relations_ud(input, output, triggers, paths, args.include_miss, args.entity_types)
+    extract_relations_ud(input, output, triggers, paths, args.include_miss)
