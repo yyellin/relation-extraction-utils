@@ -1,18 +1,12 @@
-# relation-extraction-utils: Syntactic *and* semantic based patterns for relation extraction with supporting software
+# relation-extraction-utils: Syntactic & semantic based patterns for relation extraction, with supporting software
 
 ## Introduction
 
 The relation-extraction-utils project contains an assembly of Python 3 packages used by Or, Shachar and Jonathan in support of their graduate lab work in the field of rules based systems for relation extraction.
 
-The aim of the lab is to assess whether it is possible to improve on the results of traditional pattern based approaches for identifying relations between two entities by considering patterns that stem from semantical structure of sentences, as expressed by UCCA 
+The aim of the lab is to assess whether it is possible to improve on the results of traditional pattern based approaches for identifying relations between two entities by considering patterns that stem from semantical structure of sentences, as expressed by [UCCA](http://www.cs.huji.ac.il/~oabend/ucca.htm) .
 
-[]: http://www.cs.huji.ac.il/~oabend/ucca.html	"The UCCA Resource Webpage"
-
-We relied on the TAC Relation Extraction Dataset 
-
-[]: https://catalog.ldc.upenn.edu/LDC2018T24	"TAC Relation Extraction Dataset"
-
- as our input. This dataset contains a total of 106,264 entries each representing a single sentences. Each entry contains identification of two entities and their TAC KBP relation, or no relation at all. Additionally, each entry contains Standford NLP based parts-of-speech tagging, NER tagging and dependency tree, however we did not utilize this data. The sentences are divided into sets of Train, Dev and Test.  
+We relied on the [TAC Relation Extraction Dataset](https://catalog.ldc.upenn.edu/LDC2018T24 )  as our input. This dataset contains a total of 106,264 entries each representing a single sentences. Each entry contains identification of two entities and their TAC KBP relation, or no relation at all. Additionally, each entry contains Standford NLP based parts-of-speech tagging, NER tagging and dependency tree, however we did not utilize this data. The sentences are divided into sets of Train, Dev and Test.  
 
 For the purpose of our study, we focused on the 'org:founded_by' relationship - with 124 appearances in the Train set and 76 appearances in the Dev set. 
 
@@ -24,13 +18,17 @@ The patterns themselves are based on the concept of a *path* between tokens in t
 
 The heart of this project is in the benefit of the leveraging of two sentence parsing paradigms in order to express the path between tokens:
 
-1. Universal Dependencies v2 
+##### [Universal Dependencies v2](https://en.wikipedia.org/wiki/Universal_Dependencies) 
 
-   []: https://en.wikipedia.org/wiki/Universal_Dependencies
+"The UD annotation scheme produces syntactic analyses of sentences in terms of the dependencies of dependency grammar. Each dependency is characterized in terms of a syntactic function, which is shown using a label on the dependency edge.
 
-   whatever
+[^wikipedia]: asdasd
 
-2. 
+" 
+
+##### [UCCA](<http://www.cs.huji.ac.il/~oabend/ucca.html>)
+
+
 
 The pipeline process is repeated for two classes of sentence structure: for 
 
