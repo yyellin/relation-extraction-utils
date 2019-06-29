@@ -21,6 +21,8 @@ setup(
         'bin/append_pss',
         'bin/extract_relations_ud',
         'bin/extract_relations_ucca',
-        'bin/extract_relations_ud_plus_ucca'
+        'bin/extract_relations_ud_plus_ucca',
+        'bin/filter_relations',
+
     ]
 )

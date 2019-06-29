@@ -13,10 +13,11 @@ import sys
 import en_core_web_sm
 
 from relation_extraction_utils.internal.map_csv_column import CsvColumnMapper
+from relation_extraction_utils.internal.mnofc import ManageNewOutputFileCreation
 from relation_extraction_utils.internal.sync_tags import SyncTags
 
 
-def parse_ner(input_file=None, output_file=None, batch_size=None):
+def append_ner(input_file=None, output_file=None, batch_size=None):
     """
 
      Parameters
@@ -32,45 +33,15 @@ def parse_ner(input_file=None, output_file=None, batch_size=None):
     column_mapper = CsvColumnMapper(next(csv_reader), ['ner'],
                                     source_required=['sentence', 'words'])
 
-    batch = 0
-    output = None
-    output_file = output_file[:-len('.csv')] if output_file is not None and output_file.endswith('.csv') \
-        else output_file
-
+    mnofc = ManageNewOutputFileCreation(output_file, batch_size)
 
     spacy_pipeline = en_core_web_sm.load()
 
     for count, entry in enumerate(csv_reader, start=0):
 
-        # the next few lines of code deal with opening and closing files (depending on the batching argument, etc)
-        new_file = False
-
-        # first option: standard output ...
-        if count == 0 and output_file is None:
-            output = sys.stdout
-            new_file = True
-
-        # second option: we've just started, we're writing to a real file, but no batching
-        if count == 0 and output_file is not None and batch_size is None:
-            output_file_actual = '{0}.csv'.format(output_file)
-
-            output = open(output_file_actual, 'w', encoding='utf-8', newline='')
-            new_file = True
-
-        # second case: we've finished a batch (and we are batching..)
-        if batch_size is not None and count % batch_size == 0:
-            output_file_actual = '{0}-{1}.csv'.format(output_file, batch)
-
-            if output is not None:
-                output.close()
-
-            output = open(output_file_actual, 'w', encoding='utf-8', newline='')
-            batch += 1
-            new_file = True
-
-        # if we did create a new file, let's ensure that the first row consists of column titles
+        new_file = mnofc.get_new_file_if_necessary()
         if new_file:
-            csv_writer = csv.writer(output)
+            csv_writer = csv.writer(new_file)
             csv_writer.writerow(column_mapper.get_new_headers())
 
         # now that we've finished creating a new file as necessary, we can proceed with the business
@@ -129,4 +100,4 @@ if __name__ == "__main__":
 
     args = arg_parser.parse_args()
 
-    parse_ner(input_file=args.input, output_file=args.output, batch_size=args.batch_size)
+    append_ner(input_file=args.input, output_file=args.output, batch_size=args.batch_size)
