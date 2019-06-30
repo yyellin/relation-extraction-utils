@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The relation-extraction-utils project contains an assembly of Python 3 packages used by Or, Shachar and Jonathan in support of their graduate lab work in the field of rules based systems for relation extraction.
+The relation-extraction-utils project contains an assembly of Python 3 packages used by Or, Shachar and Jonathan in support of their graduate lab work in the field of rules based systems for relation extraction, under the guidance of [Dr. Omri Abend](http://www.cs.huji.ac.il/~oabend/).
 
 The aim of the lab is to assess whether it is possible to improve on the results of traditional pattern based approaches for identifying relations between two entities by considering patterns that stem from semantical structure of sentences, as expressed by [UCCA](http://www.cs.huji.ac.il/~oabend/ucca.htm) .
 
@@ -18,7 +18,7 @@ The patterns themselves are based on the concept of a *path* between tokens in t
 
 The heart of this project is a technique for capturing a path between tokens using a sentences dependency structures. To this end we leverage two sentence dependency structures paradigms - the syntactic UDv2 and the semantic UCCA. 
 
-##### [Universal Dependencies v2](<https://universaldependencies.org/>) 
+### [Universal Dependencies v2](<https://universaldependencies.org/>) 
 
 "The UD annotation scheme produces syntactic analyses of sentences in terms of the dependencies of dependency grammar. Each dependency is characterized in terms of a syntactic function, which is shown using a label on the dependency edge." (from [Wikipedia article on Universal Dependencies](https://universaldependencies.org/)). 
 
@@ -30,29 +30,35 @@ We consider the dependency structure of the sentence:
 
 ![UD v2 dependency tree](images-for-readme/udv2.png)
 
-Entity one is *'Access Industries'*, entity tow is *'Len Blavatnik'* and the trigger word us *'founded'* - the path from entity one to the trigger word (which we define to be the shortest possible path) follows this trail: from the token *'Industries'* in the direction of its *appos* dependency child, the token *'company'*, and then from the token *'company'* to its *acl* dependency child*'founded'*. We capture this path as **!appos !acl >< !obl** where the '!' represents a move from parent to child; a step from child to parent would be represented with the '^' (so for example, the path from *'founded'* back to *'Industries'* would be represented with the string **^acl ^appos**)
+Entity one is *'Access Industries'*, entity two is *'Len Blavatnik'* and the trigger word us *'founded'* - the path from entity one to the trigger word (which we define to be the shortest possible path) follows this trail: from the token *'Industries'* in the direction of its *appos* dependency child, the token *'company'*, and then from the token *'company'* to its *acl* dependency child *'founded'*. We capture this path as **!appos !acl ** where the '!' represents a move from parent to child; a step from child to parent would be represented with the '^' (so for example, the path from *'founded'* back to *'Industries'* would be represented with the string **^acl ^appos**). The second part of the pattern represents the path from the tojen *'founded'* to the token *'Len'*. Using the same system we get **!obl**. We capture both parts of the path by concatenating them, using the symbol **><** to represent the trigger word, yielding the full path of **!appos !acl >< !obl**.
 
-##### [UCCA](<http://www.cs.huji.ac.il/~oabend/ucca.html>)
+### [UCCA](<http://www.cs.huji.ac.il/~oabend/ucca.html>)
 
-While UD describes sentence structure in syntactical terms, UCCA (Universal Conceptual Cognitive Annotation) is a semantical approach to grammatical representations.  We considering the UCCA structure of the sentence we presented above:
+While UD describes sentence structure in syntactical terms, UCCA (Universal Conceptual Cognitive Annotation) is a semantical approach to grammatical representations.  
 
+We consider the UCCA structure of the sentence we presented above:
 
+![UCCA ](images-for-readme/ucca.png)
 
-The pipeline process is repeated for two classes of sentence structure: for 
+Now we need to capture the shortest path from token #0.1 *'Access'* to token #0.8 *'founded'*: starting from 0.1's parent, 1.7, against the direction of the dependency to 1.3, and then from 1.3, with the direction of the dependency, to  1.10, 1.24 and finally 1.33. We express both the type of link and the direction we flow in the path to give us **^E !E !E !P**. By the same vein, the path from the trigger word's parent 1.33 to entity two's parent is **^P !A !C**. Considering both legs of the path, and symoblizing the trigger word with **><**  we get the pattern **^E !E !E !P >< ^P !A !C** for the entire path.
 
+## Pipeline
 
+Armed with the method described above we implemented ....
 
 ### Pattern Extraction
 
-P
-
-![](C:\Users\jyellin\Desktop\Relation-Extraction.png)
 
 
+![](images-for-readme/path-identification.png)
+
+### 
 
 
 
-## Modules
+## Code
+
+### Modules
 
 | Modules | Purpose |
 |---|---|
@@ -60,13 +66,13 @@ P
 | display_path_stats | Receives a pre-populated comma delimited file containing sentences from the TAC Relation Extraction Dataset identified as containing a given relationship, and calculates paths from trigger word to relation entities, and between the entities themselves |
 | identify_false_positives |  |
 
-## Setup
+### Setup
 
 relation-extraction-utils supports Python 3.6 or later; you can also install from source of this git repository by running:
 ```bash
 pip install -U git+https://github.com/comp-aspects-of-appl-linguistics/relation_extraction_utils.git
 ```
 
-## License
+### License
 
 relation-extraction-utils is released under GPLv3.
