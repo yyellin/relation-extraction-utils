@@ -24,7 +24,7 @@ The heart of this project is a technique for capturing a path between tokens usi
 
 Version 2 of Universal Dependencies represents an advancement of the syntactic dependencies, and it is the version used in this work. At the time of writing the only freely available software package that supports the parsing of a sentence into v2 of UD that we were able to identify is [StanfordNLP: A Python NLP Library for Many Human Languages](<https://github.com/stanfordnlp/stanfordnlp>). The well known [Java based NLP library from Standford](<https://github.com/stanfordnlp/CoreNLP>) is still oriented to v1 of UD.
 
-To explain how the paths are reflected as a pattern, we consider the sentence "Access Industries, a privately held company *founded* in 1986 by Len Blavatnik, has a diverse portfolio of investments in industry, real estate, media and telecommunications" ("id": "e7798385822df5ab337e", "docid": "APW_ENG_20090612.0855"). It contains an *org:founded_by* relationship between the organization *'Access Industries'* and the person *'Len Blavatnik'*; the trigger word we identified in this case is the word *'founded'*.
+To explain how the paths are reflected as a pattern, we consider the sentence "Access Industries, a privately held company *founded* in 1986 by Len Blavatnik, has a diverse portfolio of investments in industry, real estate, media and telecommunications" (id: e7798385822df5ab337e, docid: APW_ENG_20090612.0855). It contains an *org:founded_by* relationship between the organization *'Access Industries'* and the person *'Len Blavatnik'*; the trigger word we identified in this case is the word *'founded'*.
 
 We consider the dependency structure of the sentence:
 
@@ -34,17 +34,19 @@ Entity one is *'Access Industries'*, entity two is *'Len Blavatnik'* and the tri
 
 ### [UCCA](<http://www.cs.huji.ac.il/~oabend/ucca.html>)
 
-While UD describes sentence structure in syntactical terms, UCCA (Universal Conceptual Cognitive Annotation) is a semantical approach to grammatical representations.  
+While UD describes sentence structure in syntactical terms, UCCA (Universal Conceptual Cognitive Annotation) is a semantical approach to grammatical representations.  We used a specific branch of the [Transition-based UCCA Parser](https://github.com/OfirArviv/tupa) for our work, in conjunction with the elmo model. More on this in section XX.
 
 We consider the UCCA structure of the sentence we presented above:
 
 ![UCCA ](images-for-readme/ucca.png)
 
-Now we need to capture the shortest path from token #0.1 *'Access'* to token #0.8 *'founded'*: starting from 0.1's parent, 1.7, against the direction of the dependency to 1.3, and then from 1.3, with the direction of the dependency, to  1.10, 1.24 and finally 1.33. We express both the type of link and the direction we flow in the path to give us **^E !E !E !P**. By the same vein, the path from the trigger word's parent 1.33 to entity two's parent is **^P !A !C**. Considering both legs of the path, and symoblizing the trigger word with **><**  we get the pattern **^E !E !E !P >< ^P !A !C** for the entire path.
+Now we need to capture the shortest path from token #0.1 *'Access'* to token #0.8 *'founded'*: starting from #0.1's parent, #1.7, against the direction of the dependency to #1.3, and then from #1.3, with the direction of the dependency, to #1.10, #1.24 and finally #1.33. We express both the type of link and the direction we flow in the path to give us **^E !E !E !P**. In the same vein, the path from the trigger word's parent #1.33 to entity two's parent is **^P !A !C**. Considering both legs of the path, and symbolizing the trigger word with **><**  we get the pattern **^E !E !E !P >< ^P !A !C** for the entire path.
 
 ## Pipeline
 
 Armed with the method described above we implemented ....
+
+WORK IN PROGRESS
 
 ### Pattern Extraction
 
