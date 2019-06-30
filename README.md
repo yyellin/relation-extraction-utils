@@ -42,13 +42,11 @@ We consider the UCCA structure of the sentence we presented above:
 
 Now we need to capture the shortest path from token #0.1 *'Access'* to token #0.8 *'founded'*: starting from #0.1's parent, #1.7, against the direction of the dependency to #1.3, and then from #1.3, with the direction of the dependency, to #1.10, #1.24 and finally #1.33. We express both the type of link and the direction we flow in the path to give us **^E !E !E !P**. In the same vein, the path from the trigger word's parent #1.33 to entity two's parent is **^P !A !C**. Considering both legs of the path, and symbolizing the trigger word with **><**  we get the pattern **^E !E !E !P >< ^P !A !C** for the entire path.
 
-## Pipeline
+## Pipeline (WORK IN PROGRESS)
 
 Armed with the method described above we implemented ....
 
-WORK IN PROGRESS
-
-### Pattern Extraction
+### Pattern Identification
 
 
 
@@ -58,7 +56,7 @@ WORK IN PROGRESS
 
 
 
-## Code
+## Code (WORK IN PROGRESS)
 
 ### Modules
 
