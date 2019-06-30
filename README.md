@@ -1,4 +1,4 @@
-# relation-extraction-utils: Syntactic & semantic based patterns for relation extraction, with supporting software
+# relation-extraction-utils: improving the results of relation extraction with syntactic based patterns by leveraging semantic based patterns (with supporting software)
 
 ## Introduction
 
@@ -12,21 +12,29 @@ For the purpose of our study, we focused on the 'org:founded_by' relationship - 
 
 ## Method
 
-We focus on relations that arise from individual sentences, and assume that a reader's ability to infer the existence of a relationship between two entities is generally contingent on the existence of  "trigger word".  We designed and implemented a software based *pipeline* for both pattern extraction and pattern application, with the former requiring minimal human intervention, and the latter requiring no human intervention at all. 
+We focus on relations that arise from individual sentences, and assume that the ability of a human reader or listener to infer the existence of a relationship between two entities is generally contingent on the existence of  "trigger word".  We designed and implemented a software based *pipeline* for both pattern extraction and pattern application, with the former requiring minimal human intervention, and the latter requiring no human intervention at all. 
 
-The patterns themselves are based on the concept of a *path* between tokens in the sentence; specifically: a pattern consists of an expression of the path between the first entity and the trigger word, and then from the trigger word to the second entity. 
+The patterns themselves are based on the concept of a *path* between tokens in the sentence; specifically, a pattern consists of an expression of the path between the first entity and the trigger word, and then from the trigger word to the second entity. 
 
-The heart of this project is in the benefit of the leveraging of two sentence parsing paradigms in order to express the path between tokens:
+The heart of this project is a technique for capturing a path between tokens using a sentences dependency structures. To this end we leverage two sentence dependency structures paradigms - the syntactic UDv2 and the semantic UCCA. 
 
-##### [Universal Dependencies v2](https://en.wikipedia.org/wiki/Universal_Dependencies) 
+##### [Universal Dependencies v2](<https://universaldependencies.org/>) 
 
-"The UD annotation scheme produces syntactic analyses of sentences in terms of the dependencies of dependency grammar. Each dependency is characterized in terms of a syntactic function, which is shown using a label on the dependency edge.
+"The UD annotation scheme produces syntactic analyses of sentences in terms of the dependencies of dependency grammar. Each dependency is characterized in terms of a syntactic function, which is shown using a label on the dependency edge." (from [Wikipedia article on Universal Dependencies](https://universaldependencies.org/)). 
 
-[^wikipedia]: asdasd
+Version 2 of Universal Dependencies represents an advancement of the syntactic dependencies, and it is the version used in this work. At the time of writing the only freely available software package that supports the parsing of a sentence into v2 of UD that we were able to identify is [StanfordNLP: A Python NLP Library for Many Human Languages](<https://github.com/stanfordnlp/stanfordnlp>). The well known [Java based NLP library from Standford](<https://github.com/stanfordnlp/CoreNLP>) is still oriented to v1 of UD.
 
-" 
+To explain how the paths are reflected as a pattern, we consider the sentence "Access Industries, a privately held company *founded* in 1986 by Len Blavatnik, has a diverse portfolio of investments in industry, real estate, media and telecommunications" ("id": "e7798385822df5ab337e", "docid": "APW_ENG_20090612.0855"). It contains an *org:founded_by* relationship between the organization *'Access Industries'* and the person *'Len Blavatnik'*; the trigger word we identified in this case is the word *'founded'*.
+
+We consider the dependency structure of the sentence:
+
+![UD v2 dependency tree](images-for-readme/udv2.png)
+
+Entity one is *'Access Industries'*, entity tow is *'Len Blavatnik'* and the trigger word us *'founded'* - the path from entity one to the trigger word (which we define to be the shortest possible path) follows this trail: from the token *'Industries'* in the direction of its *appos* dependency child, the token *'company'*, and then from the token *'company'* to its *acl* dependency child*'founded'*. We capture this path as **!appos !acl >< !obl** where the '!' represents a move from parent to child; a step from child to parent would be represented with the '^' (so for example, the path from *'founded'* back to *'Industries'* would be represented with the string **^acl ^appos**)
 
 ##### [UCCA](<http://www.cs.huji.ac.il/~oabend/ucca.html>)
+
+While UD describes sentence structure in syntactical terms, UCCA (Universal Conceptual Cognitive Annotation) is a semantical approach to grammatical representations.  We considering the UCCA structure of the sentence we presented above:
 
 
 
