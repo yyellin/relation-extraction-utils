@@ -34,7 +34,7 @@ Entity one is *'Access Industries'*, entity two is *'Len Blavatnik'* and the tri
 
 ### [UCCA](<http://www.cs.huji.ac.il/~oabend/ucca.html>)
 
-While UD describes sentence structure in syntactical terms, UCCA (Universal Conceptual Cognitive Annotation) is a semantical approach to grammatical representations developed developed in the Computational Linguistics Lab of the Hebrew University by [Dr. Omri Abend](http://www.cs.huji.ac.il/~oabend) and [Prof. Ari Rappoport](http://www.cs.huji.ac.il/~arir).  We used a specific branch of the [Transition-based UCCA Parser](https://github.com/OfirArviv/tupa) for our work, in conjunction with the elmo model. More on this in section XX.
+While UD describes sentence structure in syntactical terms, UCCA (Universal Conceptual Cognitive Annotation) is a semantical approach to grammatical representations developed in the Computational Linguistics Lab of the Hebrew University by [Dr. Omri Abend](http://www.cs.huji.ac.il/~oabend) and [Prof. Ari Rappoport](http://www.cs.huji.ac.il/~arir).  We used a specific branch of the [Transition-based UCCA Parser](https://github.com/OfirArviv/tupa) for our work, in conjunction with the elmo model. More on this in section XX.
 
 We consider the UCCA structure of the sentence we presented above:
 
