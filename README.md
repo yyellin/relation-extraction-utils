@@ -48,11 +48,7 @@ Armed with the method described above we implemented ....
 
 ### Pattern Identification
 
-
-
-![](images-for-readme/path-identification.png)
-
-### 
+<img src="images-for-readme/path-identification.png" align="left" style="zoom:60%" />
 
 
 
