@@ -46,15 +46,15 @@ We need to capture the shortest path from token #0.1 *'Access'* to token #0.8 *'
 
 The example above considers a single sentence and expatiates on how it's paths are constructed.  Clearly we need a way for automating the process of identifying paths for a given relation, and then for extracting relations based on those paths. 
 
-The core of this project is a software based pipeline for achieving precisely that. As input the pipeline receives a TAC Relation Extraction Dataset in json format and the name of the relation, and produces, as it's first step, as comma separated file that contains the token indices for the two entities that form the relation. The pipeline implementation borrows from the Unix *pipe* paradigm, in which the output of one utility forms the input of the next (e.g. `grep NLP text | wc -l`). As such translating json format into a comma separated format is very practical, since it allows for simple line by line processing, where the first line of any csv input defines the expected fields, and all following lines contain all the information pertaining to an individual sentence. The pipeline is implemented as a conglomeration of python scripts each representing a step in the pipeline process.
+The core of this project is a software based pipeline for achieving precisely that. As input the pipeline receives a TAC Relation Extraction Dataset in json format and the name of the relation, and produces, as it's first step, as comma separated file that contains the token indices for the two entities that form the relation. The pipeline implementation borrows from the Unix *pipe* paradigm, in which the output of one utility forms the input of the next (e.g. `grep NLP text | wc -l`). As such translating json format into a comma separated format is very practical, since it allows for simple line by line processing, where the first line of any csv input defines the expected fields, and all following lines contain all the information pertaining to an individual sentence. The pipeline is implemented as a conglomeration of python modules each representing a reusable step in the pipeline process.
 
-There are two distinct phases in the pipeline operation - pattern identification and relation extraction.
+There are two distinct phases in the pipeline operation - pattern identification and relation extraction. The sections bellow will describe the pipeline with reference to the specific relation that the project focused on - *org:founded_by* - however, the pipeline can be applied to any other TAC KBP relation.
 
 ### Pattern Identification
 
-The following diagram demonstrates the pipeline steps required in the *identify patterns* phase: 
+The following diagram demonstrates the pipeline steps required in the *identify patterns* phase, with each rectangle representing a software module and the input being the TAC Train json file. The pipeline can be run for either the UD flow (using *parse_ud*) or the UCCA flow (using *parse_ucca*)
 
-<img src="images-for-readme/identify-tiggers.png" align="left" style="zoom:57%" />
+![Pattern Identification pipeline](images-for-readme/path-identification.png)
 
 Following the *tac_to_csv* step, either *parse_ud* or *parse_ucca* is executed to produce a csv file for which each row contains a serialization of either a UD or a UCCA dependency tree. At this point a manual step is required for identifying the index of the trigger token for each row. Finally the csv file containing the trigger index is fed to *identify_paths*, which outputs the path for each sentence. Manual manipulation of the the output file (e.g. in Excel) is needed to produce the list of unique paths. 
 
@@ -67,11 +67,40 @@ The entire process can be summarized as:
 
 ### Compute Precision
 
-The pattern identification step results in a list of paths for the given pattern, as well as a list of trigger words  that were identified manually. The following diagram captures the precision computation sequence:
+The pattern identification step results in a list of paths for the given pattern, as well as a list of trigger words  that were identified manually. In order to compute precision we use sentences that are deemed in the TAC Train dataset to be of the *no_relation* relation, meaning that there is no relation between the two identified entities in the sentence. We count the number of such pairs that are falsely identified as forming an org:founded_by pair by one of the paths in our list out of the total number of sentences to produce a precision value.
 
+The following diagram captures the precision computation sequence:
 
+![precision computation pipeline](images-for-readme/precision-computation.png)
+
+The entire process is captured in a single command line invocation:
+
+`tac_to_csv --input train.json --relation no_relation | parse_ucca | extract_relations_ucca paths triggers | append_ner | filiter_relations --entity-types ORG PERSON`
+
+The role of the final two steps *append_ner* and *filter_relations* is to further reduce the number of false positives by removing identified relations between entities that do not match the prototype at hand. Specifically, in the case of the 'org:founded_by' relation, we expect that the entity representing the organization to be of type *ORG*, and the founding entity to be of type *PERSON*.
+
+The second step 'sample X % of sentences' is a practical nature: the number of *'no_relation'* sentences is over 50,000 which would result in many hours of processing time for the *parse_ud* or *parse_ucca* module.
+
+### Compute Recall
+
+Recall is computed in similar fashion to precision, except that the input is represented by sentences with the 'org:founded_by' relation in the Dev set of TAC sentences.
+
+![recall computation pipeline](images-for-readme/recall-computation.png)
+
+Here is the single command line invocation:
+
+`tac_to_csv --input dev.json --relation org:founded_by | parse_ucca | extract_relations_ucca paths triggers`
 
 ## Results
+
+The first set of results relates to application of the UD paths or UCCA paths seperately
+
+|               | UD based patters                                             | UCCA based patterns                                          |
+| ------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| **Precision** | Total number of sentences: 2737<br>Number of sentences with matched triggers (that were not identified) : 1238<br>Number of matches: 7<br>Number of matches filtered by NER: 0 | Total number of lines: 250<br>Number of sentences with matched triggers (that were not identified) : 115<br>Number of matches: 6<br>Number of matches filtered by NER: 0 |
+| **Recall**    |                                                              |                                                              |
+
+
 
 ## Code (WORK IN PROGRESS)
 
