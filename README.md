@@ -93,32 +93,58 @@ Here is the single command line invocation:
 
 ## Results
 
-The first set of results relates to application of the UD paths or UCCA paths seperately
+The first set of results relates to application of the UD paths or UCCA paths separately
 
 |               | UD based patters                                             | UCCA based patterns                                          |
 | ------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| **Precision** | Total number of sentences: 2737<br>Number of sentences with matched triggers (that were not identified) : 1238<br>Number of matches: 7<br>Number of matches filtered by NER: 0 | Total number of lines: 250<br>Number of sentences with matched triggers (that were not identified) : 115<br>Number of matches: 6<br>Number of matches filtered by NER: 0 |
-| **Recall**    |                                                              |                                                              |
+| **Precision** | Total number of sentences: 2737<br>Number of sentences with matched triggers (that were not identified) : 1238<br>Number of matches: 7<br>Number of matches filtered by NER: 0<br>Precision: **99.4% - 100%** | Total number of lines: 250<br/>Number of sentences with matched triggers (that were not identified) : 115<br/>Number of matches: 6<br/>Number of matches filtered by NER: 0<br/>Precision: **94.8% - 100%** |
+| **Recall**    | Total number of sentences: 76<br/>Total number sentences with usable UD parses: 72 <br/>Number of matches: 27<br/>Recall: **37.5%** | Total number of sentences: 76<br/>Total number of sentences with usable UCCA parses: 75<br/>Number of matches: 15<br/>Recall: **20%** |
 
+Considered in isolation, UCCA based patterns demonstrate inferior recall results that their UD counterparts. 
 
+**The highlight of our research is the recall result when considering both UD and UCCA based patterns.** 
 
-## Code (WORK IN PROGRESS)
+When considering the 71 sentences with both a usable UD and UCCA parse 33 sentences in total are matched, representing a recall result of **46.5%**. Or in other words, by considering UCCA patterns in addition to UD patterns we are able to improve the recall result by 9%.
+
+## Further Work
+
+## Code
 
 ### Modules
 
+All modules are implemented in Python and were run in Google's Colaboratory environment. Colaboratory is a free and open Jupyter notebook framework that requires no setup, runs entirely in the cloud and provides GPUs necessary for running some of the modules described below.
+
+The following table contains a list of exported modules that together form our relation extraction pipeline. Internal modules are documented in the source code itself.
+
 | Modules | Purpose |
 |---|---|
-| generate_csv_file | Given a TAC Relation Extraction Dataset in json format, and a given relation (e.g. 'per:employee_of'), the purpose of this module is to provide functionality for extracting all sentences where the relation is tagged in the dataset, parsing the relevant sentence into a Universal Dependency  v2 trees (using [stanfordnlp](<https://stanfordnlp.github.io/stanfordnlp/>)), producing a comma delimited file in which the researcher is then expected to identify **trigger words** |
-| display_path_stats | Receives a pre-populated comma delimited file containing sentences from the TAC Relation Extraction Dataset identified as containing a given relationship, and calculates paths from trigger word to relation entities, and between the entities themselves |
-| identify_false_positives |  |
+| tac_to_csv | Converts a json TAC file (either train.json, dev.json or test.json) to a comma-separated value file with the following columns:'tac_tokens', 'subj_start', 'subj_end', 'obj_start', 'obj_end' representing the corresponding values in each input json document |
+| parse_ud | Each sentence represented by an entry in the comma-separated value input is processed by the [stanfordnlp python modules](https://github.com/stanfordnlp/stanfordnlp) to produce additional columns containing a serialization of the UDv2 tree as well as a list of tokens and lemmas. parse_ud also produces 'ent1_start', 'ent1_end', 'ent2_start', 'ent2_end' values that represent the input 'subj_start', 'subj_end', 'obj_start', 'obj_end' values following their adjustment to the tokenization produced by  stanfordnlp's python module. |
+| parse_ucca | Similar to parse_ud except that the graph produced is a UCCA representation of the sentence parsed. parse_ucca does not directly invoke the TUPA command line but rather interoperates directly with the TUPA classes and utilities. Like parse_ud, parse_ucca produces 'ent1_start', 'ent1_end', 'ent2_start', 'ent2_end' values that represent the input 'subj_start', 'subj_end', 'obj_start', 'obj_end' values following their adjustment to the tokenization produced by  TUPA. |
+| parse_ucca2 | Identical to parse_ucca except that invokes TUPA's command line utility as a sub-process. |
+| identify_paths | For each row in the input file, produces an identical output row and adds the UCCA path for it. <br/>Currently the source code contains a version of identify_paths appropriate for UCCA input; it needs to be supplemented with the UD verison |
+| extract_relations_ud | Extracts relations in the input file that match a given list of UD paths and trigger words |
+| extract_relations_ucca | Extracts relations in the input file that match a given list of UCCA paths and trigger words |
+| extract_relations_ud_plus_ucca | Extracts relations in the input file that match a given list of either UD or UCCA paths and trigger words |
+| append_ner | For each sentence represented by an entry in the comma-separated value input, an output column containing the named entity recognition pertaining to the tokens of the sentences is added |
+| append_pss | In the final version of our lab work we did not make use of PSS (preposition supersense tagging), as our precision results did not require it; however during our work we did want to see whether the consideration of PSS tagging would improve precision results. The purpose of this utility is to add PSS information for each entry in the input. |
+| filter_relations | The NER values for each of the entities in each sentence in the input file are compared to the expected values provided as an argument to filter_relations, |
 
 ### Setup
 
-relation-extraction-utils supports Python 3.6 or later; you can also install from source of this git repository by running:
+relation-extraction-utils supports Python 3.6 or later and can be installed directly from source of this git repository by running:
 ```bash
 pip install -U git+https://github.com/comp-aspects-of-appl-linguistics/relation_extraction_utils.git
 ```
 
+To run some of the utilities additional dependencies are required. Please refer to the following  Jupyter notebooks that capture all the required details:
+
+|                                                              | Jupyter notebooks                                            |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| UDv2 parsing<br>additional dependencies required by ud_parse | [prepare_environment_for_parse_ud.ipynb](colabs/prepare_environment_for_parse_ud.ipynb) |
+| UCCA parsing<br>additional dependencies required by ucca_parse and ucca_parse2 | [prepare_environment_for_parse_tupa.ipynb](colabs/prepare_environment_for_parse_tupa.ipynb) |
+| PSS parsing<br>additional dependencies required by append_pss, which as noted above is not actually utilized for the results presented<br>(as the reader will see in the source code of the Jupyter notebook, getting PSS to work properly for our needs required considerable coding acrobatics) | [prepare_environment_for_append_pss.ipynb](colabs/prepare_environment_for_append_pss.ipynb) |
+
 ### License
 
-relation-extraction-utils is released under GPLv3.
+relation-extraction-utils code is released under GPLv3.
