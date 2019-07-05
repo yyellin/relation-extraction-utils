@@ -141,9 +141,9 @@ To run some of the utilities additional dependencies are required. Please refer 
 
 | Module                                                       | Jupyter notebooks                                            |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| parse_ud:<br>requires stanfordnlp python modules and models  | [prepare_environment_for_parse_ud.ipynb](colabs/prepare_environment_for_parse_ud.ipynb) |
-| parse_ucca and parse_ucca2:<br>require UCCA and TUPA related python modules and models | [prepare_environment_for_parse_tupa.ipynb](colabs/prepare_environment_for_parse_tupa.ipynb) |
-| append_pss<br>requires PSS parsing python modules and models<br>(as the reader of the Jupyter notebook will notice, getting PSS to work properly for our needs required considerable coding acrobatics) | [prepare_environment_for_append_pss.ipynb](colabs/prepare_environment_for_append_pss.ipynb) |
+| **parse_ud**:<br>requires stanfordnlp python modules and models | [prepare_environment_for_parse_ud.ipynb](colabs/prepare_environment_for_parse_ud.ipynb) |
+| **parse_ucca** and **parse_ucca2**:<br>require UCCA and TUPA related python modules and models | [prepare_environment_for_parse_tupa.ipynb](colabs/prepare_environment_for_parse_tupa.ipynb) |
+| **append_pss**:<br>requires PSS parsing python modules and models<br>(as the reader of the Jupyter notebook will notice, getting PSS to work properly for our needs required considerable coding acrobatics) | [prepare_environment_for_append_pss.ipynb](colabs/prepare_environment_for_append_pss.ipynb) |
 
 ### License
 
