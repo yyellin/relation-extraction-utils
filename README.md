@@ -95,7 +95,7 @@ Here is the single command line invocation:
 
 The first set of results relates to application of the UD paths or UCCA paths separately
 
-|               | UD based patters                                             | UCCA based patterns                                          |
+|               | UD based patterns                                            | UCCA based patterns                                          |
 | ------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | **Precision** | Total number of sentences: 2,737<br>Number of sentences with matched triggers (that were not identified) : 1238<br>Number of matches: 7<br>Number of matches filtered by NER: 0<br>Precision: **99.4% - 100%** | Total number of lines: 250<br/>Number of sentences with matched triggers (that were not identified) : 115<br/>Number of matches: 6<br/>Number of matches filtered by NER: 0<br/>Precision: **94.8% - 100%** |
 | **Recall**    | Total number of sentences: 76<br/>Total number sentences with usable UD parses: 72 <br/>Number of matches: 27<br/>Recall: **37.5%** | Total number of sentences: 76<br/>Total number of sentences with usable UCCA parses: 75<br/>Number of matches: 15<br/>Recall: **20%** |
@@ -139,7 +139,7 @@ pip install -U git+https://github.com/comp-aspects-of-appl-linguistics/relation_
 
 To run some of the utilities additional dependencies are required. Please refer to the following  Jupyter notebooks that capture all the required details:
 
-| Module                                                       | Jupyter notebooks                                            |
+| Modules with Dependency                                      | Jupyter notebooks                                            |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | **parse_ud**:<br>requires stanfordnlp python modules and models | [prepare_environment_for_parse_ud.ipynb](colabs/prepare_environment_for_parse_ud.ipynb) |
 | **parse_ucca** and **parse_ucca2**:<br>require UCCA and TUPA related python modules and models | [prepare_environment_for_parse_tupa.ipynb](colabs/prepare_environment_for_parse_tupa.ipynb) |
