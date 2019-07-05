@@ -1,4 +1,4 @@
-# relation-extraction-utils: <BR>Improving the results of relation extraction with syntactic based patterns by leveraging semantic based patterns (with supporting software)
+# relation-extraction-utils: <BR>Improving results of syntax based relation extraction patterns by leveraging semantic based patterns (plus supporting software)
 
 ## Introduction
 
@@ -132,12 +132,12 @@ The following table contains a list of exported modules that together form our r
 
 ### Setup
 
-relation-extraction-utils supports Python 3.6 or later and can be installed directly from source of this git repository by running:
+relation-extraction-utils requires Python 3.6 or later and can be installed directly from source of this git repository by running:
 ```bash
 pip install -U git+https://github.com/comp-aspects-of-appl-linguistics/relation_extraction_utils.git
 ```
 
-To run some of the utilities additional dependencies are required. Please refer to the following  Jupyter notebooks that capture all the required details:
+Some of the utilities require additional dependencies. Please refer to the following  Jupyter notebooks that capture all the details as code:
 
 | Modules with Dependency                                      | Jupyter notebooks                                            |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
